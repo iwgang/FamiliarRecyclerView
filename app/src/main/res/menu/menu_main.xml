@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="cn.iwgang.familiarrecyclerviewdemo.MainActivity">
+
+    <item
+        android:id="@+id/id_action_add"
+        android:orderInCategory="100"
+        android:title="add"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/id_action_delete"
+        android:orderInCategory="100"
+        android:title="delete"
+        app:showAsAction="ifRoom" />
+
+</menu>

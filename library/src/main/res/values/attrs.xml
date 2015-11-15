@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="FamiliarRecyclerView">
+        <attr name="hrv_divider" format="reference|color" />
+        <attr name="hrv_dividerHeight" format="dimension" />
+    </declare-styleable>
+
+</resources>
