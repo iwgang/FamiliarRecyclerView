@@ -4,6 +4,7 @@
     <declare-styleable name="FamiliarRecyclerView">
         <attr name="hrv_divider" format="reference|color" />
         <attr name="hrv_dividerHeight" format="dimension" />
+        <attr name="hrv_itemViewBothSidesMargin" format="dimension" />
     </declare-styleable>
 
 </resources>

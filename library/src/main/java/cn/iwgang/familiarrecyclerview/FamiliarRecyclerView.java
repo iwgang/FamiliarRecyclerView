@@ -27,6 +27,7 @@ public class FamiliarRecyclerView extends RecyclerView {
     private int mLayoutManagerType = FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_LINEAR;
     private FamiliarDefaultItemDecoration mFamiliarDefaultItemDecoration;
 
+    private int mItemViewBothSidesMargin;
     private int mDividerHeight;
     private Drawable mDivider;
 
@@ -47,22 +48,19 @@ public class FamiliarRecyclerView extends RecyclerView {
         super(context, attrs, defStyle);
 
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.FamiliarRecyclerView);
+        mItemViewBothSidesMargin = (int)ta.getDimension(R.styleable.FamiliarRecyclerView_hrv_itemViewBothSidesMargin, 0);
         mDivider = ta.getDrawable(R.styleable.FamiliarRecyclerView_hrv_divider);
-        int tempDividerHeight = (int)ta.getDimension(R.styleable.FamiliarRecyclerView_hrv_dividerHeight, -1);
+        mDividerHeight = (int)ta.getDimension(R.styleable.FamiliarRecyclerView_hrv_dividerHeight, -1);
         if (mDivider != null) {
-            mDividerHeight = mDivider.getIntrinsicHeight();
-
-            if (tempDividerHeight == -1) {
-                if (mDividerHeight <= 0) {
-                    // default
-                    mDividerHeight = 1;
-                }
-            } else {
+            int tempDividerHeight = mDivider.getIntrinsicHeight();
+            if (mDividerHeight <= 0 && tempDividerHeight <= 0) {
+                // default
+                mDividerHeight = 1;
+            } else if (mDividerHeight < tempDividerHeight) {
                 mDividerHeight = tempDividerHeight;
             }
-        } else {
-            mDividerHeight = 0;
         }
+
         ta.recycle();
 
         initView();
@@ -135,21 +133,20 @@ public class FamiliarRecyclerView extends RecyclerView {
         }
 
         mFamiliarDefaultItemDecoration = new FamiliarDefaultItemDecoration(this, mDivider, mDividerHeight);
+        mFamiliarDefaultItemDecoration.setItemViewBothSidesMargin(mItemViewBothSidesMargin);
         super.addItemDecoration(mFamiliarDefaultItemDecoration);
     }
 
     public void setDivider(Drawable divider) {
-        if (null != divider) {
-            this.mDivider = divider;
+        if (!isDefaultItemDecoration || (null != divider && mDividerHeight <= 0)) return ;
 
-            if (isDefaultItemDecoration) {
-                if (null == mFamiliarDefaultItemDecoration) {
-                    addDefaultItemDecoration();
-                } else {
-                    mFamiliarDefaultItemDecoration.setDividerDrawable(mDivider);
-                    invalidate();
-                }
-            }
+        this.mDivider = divider;
+
+        if (null == mFamiliarDefaultItemDecoration) {
+            addDefaultItemDecoration();
+        } else {
+            mFamiliarDefaultItemDecoration.setDividerDrawable(mDivider);
+            invalidate();
         }
     }
 
