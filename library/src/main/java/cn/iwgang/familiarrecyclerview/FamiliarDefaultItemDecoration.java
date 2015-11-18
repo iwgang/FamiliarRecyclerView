@@ -180,13 +180,13 @@ public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
                         if (position + 1 != itemViewCount + headersCount) {
                             final int top = childView.getBottom() + childViewParams.bottomMargin;
                             final int bottom = top + mDividerDrawableSize;
-                            mDividerDrawable.setBounds(parentLeft, top, parentRight, bottom);
+                            mDividerDrawable.setBounds(parentLeft + mItemViewBothSidesMargin, top, parentRight - mItemViewBothSidesMargin, bottom);
                             mDividerDrawable.draw(c);
                         }
                     } else {
                         final int left = childView.getRight() + childViewParams.rightMargin;
                         final int right = left + mDividerDrawableSize;
-                        mDividerDrawable.setBounds(left, parentTop, right, parentBottom);
+                        mDividerDrawable.setBounds(left, parentTop + mItemViewBothSidesMargin, right, parentBottom - mItemViewBothSidesMargin);
                         mDividerDrawable.draw(c);
                     }
                     break;

@@ -61,9 +61,9 @@ public class GridLayoutActivity extends ActionBarActivity {
 
         // LayoutManager
         if (isVertical) {
-            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
         } else {
-            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3, GridLayoutManager.HORIZONTAL, false));
+            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 4, GridLayoutManager.HORIZONTAL, false));
         }
 
         mRecyclerView.setOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecyclerView.getLayoutManager()) {
@@ -91,6 +91,8 @@ public class GridLayoutActivity extends ActionBarActivity {
         // footer view
         mRecyclerView.addFooterView(HeaderAndFooterViewUtil.getFooterView(this, isVertical, 0xFF778899, "Foot View 1"));
         mRecyclerView.addFooterView(HeaderAndFooterViewUtil.getFooterView(this, isVertical, Color.RED, "Foot View 2"));
+
+        mRecyclerView.setEmptyView(findViewById(R.id.tv_empty), true);
 
         mAdapter = new MyAdapter();
         mRecyclerView.setAdapter(mAdapter);

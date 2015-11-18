@@ -38,7 +38,7 @@ public class StaggeredGridActivity extends ActionBarActivity {
 
         mDatas = new ArrayList<>();
         mViewHeights = new ArrayList<>();
-        for (int i = 0; i < 24; i++) {
+        for (int i = 0; i < 22; i++) {
             mDatas.add("test:" + i);
             mViewHeights.add((int)(300 + Math.random() * 300));
         }
@@ -94,6 +94,8 @@ public class StaggeredGridActivity extends ActionBarActivity {
         // footer view
         mRecyclerView.addFooterView(HeaderAndFooterViewUtil.getFooterView(this, isVertical, 0xFF778899, "Foot View 1"));
         mRecyclerView.addFooterView(HeaderAndFooterViewUtil.getFooterView(this, isVertical, Color.RED, "Foot View 2"));
+
+        mRecyclerView.setEmptyView(findViewById(R.id.tv_empty), true);
 
         mAdapter = new MyAdapter();
         mRecyclerView.setAdapter(mAdapter);
@@ -158,7 +160,7 @@ public class StaggeredGridActivity extends ActionBarActivity {
 
                 mAdapter.notifyItemRemoved(mRecyclerView.getHeaderViewsCount() + mDatas.size() - 1);
                 mDatas.remove(mDatas.size() - 1);
-                mViewHeights.remove(mDatas.size() - 1);
+                mViewHeights.remove(mViewHeights.size() - 1);
                 break;
         }
         return true;

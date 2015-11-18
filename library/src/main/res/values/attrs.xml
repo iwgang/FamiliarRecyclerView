@@ -5,6 +5,7 @@
         <attr name="hrv_divider" format="reference|color" />
         <attr name="hrv_dividerHeight" format="dimension" />
         <attr name="hrv_itemViewBothSidesMargin" format="dimension" />
+        <attr name="hrv_emptyView" format="reference" />
     </declare-styleable>
 
 </resources>

@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +31,10 @@ public class FamiliarRecyclerView extends RecyclerView {
     private int mItemViewBothSidesMargin;
     private int mDividerHeight;
     private Drawable mDivider;
-
     private boolean isDefaultItemDecoration = true;
-
+    private boolean isRetainShowHeadOrFoot = false;
+    private int mEmptyViewResId;
+    private View mEmptyView;
     private OnItemClickListener mTempOnItemClickListener;
     private OnItemLongClickListener mTempOnItemLongClickListener;
 
@@ -60,14 +62,40 @@ public class FamiliarRecyclerView extends RecyclerView {
                 mDividerHeight = tempDividerHeight;
             }
         }
-
+        mEmptyViewResId = ta.getResourceId(R.styleable.FamiliarRecyclerView_hrv_emptyView, -1);
         ta.recycle();
-
-        initView();
     }
 
     @Override
     public void setAdapter(Adapter adapter) {
+        // Only once
+        if (mEmptyViewResId != -1) {
+            if (null != getParent()) {
+                ViewGroup parentView = ((ViewGroup)getParent());
+                mEmptyView = parentView.findViewById(mEmptyViewResId);
+                if (isRetainShowHeadOrFoot) {
+                    parentView.removeView(mEmptyView);
+                }
+            }
+            mEmptyViewResId = -1;
+        } else if (isRetainShowHeadOrFoot && null != mEmptyView) {
+            ((ViewGroup)mEmptyView.getParent()).removeView(mEmptyView);
+        }
+
+        if (null == adapter) {
+            if (null != mReqAdapter) {
+                if (!isRetainShowHeadOrFoot) {
+                    mReqAdapter.unregisterAdapterDataObserver(mEmptyAdapterDataObserver);
+                }
+                mReqAdapter = null;
+                mWrapFamiliarRecyclerViewAdapter = null;
+
+                processEmptyView(0);
+            }
+
+            return;
+        }
+
         mReqAdapter = adapter;
         mWrapFamiliarRecyclerViewAdapter = new FamiliarWrapRecyclerViewAdapter(this, adapter, mHeaderView, mFooterView, mLayoutManagerType);
 
@@ -75,10 +103,19 @@ public class FamiliarRecyclerView extends RecyclerView {
         mWrapFamiliarRecyclerViewAdapter.setOnItemLongClickListener(mTempOnItemLongClickListener);
 
         super.setAdapter(mWrapFamiliarRecyclerViewAdapter);
+
+        mReqAdapter.registerAdapterDataObserver(mEmptyAdapterDataObserver);
+
+        processEmptyView(mReqAdapter.getItemCount());
     }
 
-    private void initView() {
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
 
+        if (null != mReqAdapter) {
+            mReqAdapter.unregisterAdapterDataObserver(mEmptyAdapterDataObserver);
+        }
     }
 
     @Override
@@ -108,7 +145,7 @@ public class FamiliarRecyclerView extends RecyclerView {
             mLayoutManagerType = FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_LINEAR;
         }
 
-       setDivider(mDivider);
+        setDivider(mDivider);
     }
 
     @Override
@@ -135,6 +172,31 @@ public class FamiliarRecyclerView extends RecyclerView {
         mFamiliarDefaultItemDecoration = new FamiliarDefaultItemDecoration(this, mDivider, mDividerHeight);
         mFamiliarDefaultItemDecoration.setItemViewBothSidesMargin(mItemViewBothSidesMargin);
         super.addItemDecoration(mFamiliarDefaultItemDecoration);
+    }
+
+    private void processEmptyView(int curTotalNum) {
+        if (!isRetainShowHeadOrFoot && null != mEmptyView) {
+            boolean isShowEmptyView = curTotalNum == 0;
+            mEmptyView.setVisibility(isShowEmptyView ? VISIBLE : GONE);
+            setVisibility(isShowEmptyView ? GONE : VISIBLE);
+        }
+    }
+
+    public void setEmptyView(View emptyView) {
+        setEmptyView(emptyView, false);
+    }
+
+    public void setEmptyView(View emptyView, boolean isRetainShowHeadOrFoot) {
+        this.mEmptyView = emptyView;
+        this.isRetainShowHeadOrFoot = isRetainShowHeadOrFoot;
+    }
+
+    public View getEmptyView() {
+        return mEmptyView;
+    }
+
+    public boolean isRetainShowHeadOrFoot() {
+        return isRetainShowHeadOrFoot;
     }
 
     public void setDivider(Drawable divider) {
@@ -257,5 +319,20 @@ public class FamiliarRecyclerView extends RecyclerView {
     public interface OnItemLongClickListener {
         boolean onItemLongClick(FamiliarRecyclerView familiarRecyclerView, View view, int position);
     }
+
+    private AdapterDataObserver mEmptyAdapterDataObserver = new AdapterDataObserver() {
+        @Override
+        public void onChanged() {
+            processEmptyView(null != mReqAdapter ? mReqAdapter.getItemCount() : 0);
+        }
+
+        public void onItemRangeInserted(int positionStart, int itemCount) {
+            processEmptyView(null != mReqAdapter ? mReqAdapter.getItemCount() + itemCount : 0);
+        }
+
+        public void onItemRangeRemoved(int positionStart, int itemCount) {
+            processEmptyView(null != mReqAdapter ? mReqAdapter.getItemCount() - itemCount : 0);
+        }
+    };
 
 }

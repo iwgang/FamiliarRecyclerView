@@ -17,6 +17,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
     private static final int VIEW_TYPE_HEADER = 0;
     private static final int VIEW_TYPE_FOOTER = 1;
     private static final int VIEW_TYPE_ITEM = 2;
+    private static final int VIEW_TYPE_EMPTYVIEW = 3;
 
     public static final int LAYOUT_MANAGER_TYPE_LINEAR = 0;
     public static final int LAYOUT_MANAGER_TYPE_GRID = 1;
@@ -50,7 +51,12 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
     @Override
     public int getItemCount() {
         int count = 0;
-        count += mReqAdapter.getItemCount();
+        int tempItemCount = mReqAdapter.getItemCount();
+        if (mFamiliarRecyclerView.isRetainShowHeadOrFoot()) {
+            count += tempItemCount == 0 ? 1 : tempItemCount;
+        } else {
+            count += tempItemCount;
+        }
 
         if (null != mHeaderView && mHeaderView.size() > 0) {
             count += mHeaderView.size();
@@ -59,6 +65,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
         if (null != mFooterView && mFooterView.size() > 0) {
             count += mFooterView.size();
         }
+
         return count;
     }
 
@@ -74,13 +81,16 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
 
         // item view
         int adapterCount = 0;
-        if (mReqAdapter != null && position >= headersCount) {
+        if (mReqAdapter != null && mReqAdapter.getItemCount() > 0 && position >= headersCount) {
             int adjPosition = position - headersCount;
             adapterCount = mReqAdapter.getItemCount();
             if (adjPosition < adapterCount) {
                 mReqAdapter.getItemViewType(adjPosition);
                 return VIEW_TYPE_ITEM;
             }
+        } else if (mFamiliarRecyclerView.isRetainShowHeadOrFoot()) {
+            // empty view
+            if (position == headersCount) return VIEW_TYPE_EMPTYVIEW;
         }
 
         // footer view
@@ -91,7 +101,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
-            case VIEW_TYPE_HEADER:
+            case VIEW_TYPE_HEADER: {
                 // create header view
                 EmptyHeaderOrFooterViewHolder headerViewHolder;
                 View tempHeadView = mHeaderView.get(curHeaderOrFooterPos);
@@ -106,7 +116,8 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
                     headerViewHolder = new EmptyHeaderOrFooterViewHolder(tempHeadView);
                 }
                 return headerViewHolder;
-            case VIEW_TYPE_FOOTER:
+            }
+            case VIEW_TYPE_FOOTER: {
                 // create footer view
                 EmptyHeaderOrFooterViewHolder footerViewHolder;
                 View tempFooterView = mFooterView.get(curHeaderOrFooterPos);
@@ -121,6 +132,24 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
                     footerViewHolder = new EmptyHeaderOrFooterViewHolder(mFooterView.get(curHeaderOrFooterPos));
                 }
                 return footerViewHolder;
+            }
+            case VIEW_TYPE_EMPTYVIEW: {
+                EmptyHeaderOrFooterViewHolder emptyViewHolder;
+                View emptyView = mFamiliarRecyclerView.getEmptyView();
+                emptyView.setVisibility(View.VISIBLE);
+                if (mLayoutManagerType == LAYOUT_MANAGER_TYPE_STAGGERED_GRID) {
+                    FrameLayout mContainerView = new FrameLayout(emptyView.getContext());
+                    mContainerView.addView(emptyView);
+                    emptyViewHolder = new EmptyHeaderOrFooterViewHolder(mContainerView);
+                    StaggeredGridLayoutManager.LayoutParams layoutParams = new StaggeredGridLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    layoutParams.setFullSpan(true);
+                    emptyViewHolder.itemView.setLayoutParams(layoutParams);
+                } else {
+                    emptyViewHolder = new EmptyHeaderOrFooterViewHolder(emptyView);
+                }
+
+                return emptyViewHolder;
+            }
             default:
                 // create default item view
                 RecyclerView.ViewHolder itemViewHolder = mReqAdapter.onCreateViewHolder(parent, viewType);

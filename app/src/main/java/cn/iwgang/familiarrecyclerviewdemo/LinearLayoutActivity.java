@@ -92,6 +92,10 @@ public class LinearLayoutActivity extends ActionBarActivity {
         mRecyclerView.addFooterView(HeaderAndFooterViewUtil.getFooterView(this, isVertical, 0xFF778899, "Foot View 1"));
         mRecyclerView.addFooterView(HeaderAndFooterViewUtil.getFooterView(this, isVertical, Color.RED, "Foot View 2"));
 
+        // empty view
+        View emptyView = View.inflate(this, R.layout.empty_view, null);
+        mRecyclerView.setEmptyView(findViewById(R.id.tv_empty), true);
+
         mAdapter = new MyAdapter();
         mRecyclerView.setAdapter(mAdapter);
     }
