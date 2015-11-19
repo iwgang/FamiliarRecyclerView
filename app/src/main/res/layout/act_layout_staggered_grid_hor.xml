@@ -16,9 +16,14 @@
         android:id="@+id/mRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        app:frv_divider="#FFF333"
-        app:frv_dividerHeight="5.5dp"
-        app:frv_itemViewBothSidesMargin="20dp" />
+        android:scrollbars="horizontal"
+        app:frv_dividerHorizontalHeight="10dp"
+        app:frv_dividerVerticalHeight="20dp"
+        app:frv_footerDividersEnabled="true"
+        app:frv_headerDividersEnabled="true"
+        app:frv_itemViewBothSidesMargin="20dp"
+        app:frv_layoutManager="staggeredGrid"
+        app:frv_layoutManagerOrientation="horizontal"
+        app:frv_spanCount="2" />
 
 </RelativeLayout>

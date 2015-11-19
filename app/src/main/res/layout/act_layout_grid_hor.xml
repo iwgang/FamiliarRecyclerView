@@ -6,8 +6,8 @@
 
     <TextView
         android:id="@+id/tv_empty"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
         android:gravity="center"
         android:text="no data"
         android:visibility="gone" />
@@ -16,9 +16,14 @@
         android:id="@+id/mRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        app:frv_divider="#FFF333"
-        app:frv_dividerHeight="5.5dp"
-        app:frv_itemViewBothSidesMargin="20dp" />
+        android:scrollbars="horizontal"
+        app:frv_dividerHorizontalHeight="30dp"
+        app:frv_dividerVerticalHeight="10dp"
+        app:frv_footerDividersEnabled="true"
+        app:frv_headerDividersEnabled="true"
+        app:frv_itemViewBothSidesMargin="20dp"
+        app:frv_layoutManager="grid"
+        app:frv_layoutManagerOrientation="horizontal"
+        app:frv_spanCount="4" />
 
 </RelativeLayout>

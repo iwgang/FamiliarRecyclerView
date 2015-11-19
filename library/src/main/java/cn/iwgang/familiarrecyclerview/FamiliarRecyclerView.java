@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
@@ -20,23 +21,36 @@ import java.util.List;
  * https://github.com/iwgang/FamiliarRecyclerView
  */
 public class FamiliarRecyclerView extends RecyclerView {
+    public static final int LAYOUT_MANAGER_TYPE_LINEAR = 0;
+    public static final int LAYOUT_MANAGER_TYPE_GRID = 1;
+    public static final int LAYOUT_MANAGER_TYPE_STAGGERED_GRID = 2;
+
+    private static final int DEF_LAYOUT_MANAGER_TYPE = LAYOUT_MANAGER_TYPE_LINEAR;
+    private static final int DEF_GRID_SPAN_COUNT = 2;
+    private static final int DEF_LAYOUT_MANAGER_ORIENTATION = OrientationHelper.VERTICAL;
+    private static final int DEF_DIVIDER_HEIGHT = 1;
+
     private List<View> mHeaderView = new ArrayList<View>();
     private List<View> mFooterView = new ArrayList<View>();
     private FamiliarWrapRecyclerViewAdapter mWrapFamiliarRecyclerViewAdapter;
     private RecyclerView.Adapter mReqAdapter;
     private GridLayoutManager mCurGridLayoutManager;
-    private int mLayoutManagerType = FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_LINEAR;
     private FamiliarDefaultItemDecoration mFamiliarDefaultItemDecoration;
 
+    private Drawable mVerticalDivider;
+    private Drawable mHorizontalDivider;
+    private int mVerticalDividerHeight;
+    private int mHorizontalDividerHeight;
     private int mItemViewBothSidesMargin;
-    private int mDividerHeight;
-    private Drawable mDivider;
+    private boolean isHeaderDividersEnabled = false;
+    private boolean isFooterDividersEnabled = false;
     private boolean isDefaultItemDecoration = true;
     private boolean isRetainShowHeadOrFoot = false;
     private int mEmptyViewResId;
     private View mEmptyView;
     private OnItemClickListener mTempOnItemClickListener;
     private OnItemLongClickListener mTempOnItemLongClickListener;
+    private int mLayoutManagerType;
 
     public FamiliarRecyclerView(Context context) {
         this(context, null);
@@ -48,22 +62,117 @@ public class FamiliarRecyclerView extends RecyclerView {
 
     public FamiliarRecyclerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        init(context, attrs);
+    }
 
+    private void init(Context context, AttributeSet attrs) {
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.FamiliarRecyclerView);
-        mItemViewBothSidesMargin = (int)ta.getDimension(R.styleable.FamiliarRecyclerView_hrv_itemViewBothSidesMargin, 0);
-        mDivider = ta.getDrawable(R.styleable.FamiliarRecyclerView_hrv_divider);
-        mDividerHeight = (int)ta.getDimension(R.styleable.FamiliarRecyclerView_hrv_dividerHeight, -1);
-        if (mDivider != null) {
-            int tempDividerHeight = mDivider.getIntrinsicHeight();
-            if (mDividerHeight <= 0 && tempDividerHeight <= 0) {
-                // default
-                mDividerHeight = 1;
-            } else if (mDividerHeight < tempDividerHeight) {
-                mDividerHeight = tempDividerHeight;
+        Drawable divider = ta.getDrawable(R.styleable.FamiliarRecyclerView_frv_divider);
+        int dividerHeight = (int)ta.getDimension(R.styleable.FamiliarRecyclerView_frv_dividerHeight, -1);
+        mVerticalDivider = ta.getDrawable(R.styleable.FamiliarRecyclerView_frv_dividerVertical);
+        mHorizontalDivider = ta.getDrawable(R.styleable.FamiliarRecyclerView_frv_dividerHorizontal);
+        mVerticalDividerHeight = (int)ta.getDimension(R.styleable.FamiliarRecyclerView_frv_dividerVerticalHeight, -1);
+        mHorizontalDividerHeight = (int)ta.getDimension(R.styleable.FamiliarRecyclerView_frv_dividerHorizontalHeight, -1);
+        mItemViewBothSidesMargin = (int)ta.getDimension(R.styleable.FamiliarRecyclerView_frv_itemViewBothSidesMargin, 0);
+        mEmptyViewResId = ta.getResourceId(R.styleable.FamiliarRecyclerView_frv_emptyView, -1);
+        isHeaderDividersEnabled = ta.getBoolean(R.styleable.FamiliarRecyclerView_frv_headerDividersEnabled, false);
+        isFooterDividersEnabled = ta.getBoolean(R.styleable.FamiliarRecyclerView_frv_footerDividersEnabled, false);
+        if (ta.hasValue(R.styleable.FamiliarRecyclerView_frv_layoutManager)) {
+            int layoutManagerType = ta.getInt(R.styleable.FamiliarRecyclerView_frv_layoutManager, DEF_LAYOUT_MANAGER_TYPE);
+            int layoutManagerOrientation = ta.getInt(R.styleable.FamiliarRecyclerView_frv_layoutManagerOrientation, DEF_LAYOUT_MANAGER_ORIENTATION);
+            boolean isReverseLayout = ta.getBoolean(R.styleable.FamiliarRecyclerView_frv_isReverseLayout, false);
+            int gridSpanCount = ta.getInt(R.styleable.FamiliarRecyclerView_frv_spanCount, DEF_GRID_SPAN_COUNT);
+
+            switch (layoutManagerType) {
+                case LAYOUT_MANAGER_TYPE_LINEAR:
+                    processGridDivider(divider, dividerHeight, false, layoutManagerOrientation);
+                    setLayoutManager(new LinearLayoutManager(context, layoutManagerOrientation, isReverseLayout));
+                    break;
+                case LAYOUT_MANAGER_TYPE_GRID:
+                    processGridDivider(divider, dividerHeight, false, layoutManagerOrientation);
+                    setLayoutManager(new GridLayoutManager(context, gridSpanCount, layoutManagerOrientation, isReverseLayout));
+                    break;
+                case LAYOUT_MANAGER_TYPE_STAGGERED_GRID:
+                    processGridDivider(divider, dividerHeight, false, layoutManagerOrientation);
+                    setLayoutManager(new StaggeredGridLayoutManager(gridSpanCount, layoutManagerOrientation));
+                    break;
             }
         }
-        mEmptyViewResId = ta.getResourceId(R.styleable.FamiliarRecyclerView_hrv_emptyView, -1);
         ta.recycle();
+    }
+
+    private void processGridDivider(Drawable divider, int dividerHeight, boolean isLinearLayoutManager, int layoutManagerOrientation) {
+        if ((null == mVerticalDivider || null == mHorizontalDivider) && null != divider) {
+            if (isLinearLayoutManager) {
+                if (layoutManagerOrientation == OrientationHelper.VERTICAL && null == mHorizontalDivider) {
+                    mHorizontalDivider = divider;
+                } else if (layoutManagerOrientation == OrientationHelper.HORIZONTAL && null == mVerticalDivider) {
+                    mVerticalDivider = divider;
+                }
+            } else {
+                if (null == mVerticalDivider) {
+                    mVerticalDivider = divider;
+                }
+
+                if (null == mHorizontalDivider) {
+                    mHorizontalDivider = divider;
+                }
+            }
+        }
+
+        if (mVerticalDividerHeight > 0 && mHorizontalDividerHeight > 0) return ;
+
+        if (dividerHeight > 0) {
+            if (isLinearLayoutManager) {
+                if (layoutManagerOrientation == OrientationHelper.VERTICAL && mHorizontalDividerHeight <= 0) {
+                    mHorizontalDividerHeight = dividerHeight;
+                } else if(layoutManagerOrientation == OrientationHelper.HORIZONTAL && mVerticalDividerHeight <= 0) {
+                    mVerticalDividerHeight = dividerHeight;
+                }
+            } else {
+                if (mVerticalDividerHeight <= 0) {
+                    mVerticalDividerHeight = dividerHeight;
+                }
+
+                if (mHorizontalDividerHeight <= 0) {
+                    mHorizontalDividerHeight = dividerHeight;
+                }
+            }
+        } else {
+            int dividerIntrinsicHeight = null != divider && divider.getIntrinsicHeight() > 0 ? divider.getIntrinsicHeight() : -1;
+
+            if (isLinearLayoutManager) {
+                if (layoutManagerOrientation == OrientationHelper.VERTICAL && mHorizontalDividerHeight <= 0) {
+                    if (null != mHorizontalDivider && mHorizontalDivider.getIntrinsicHeight() > 0) {
+                        mHorizontalDividerHeight = mHorizontalDivider.getIntrinsicHeight();
+                    } else {
+                        mHorizontalDividerHeight = dividerIntrinsicHeight > 0 ? dividerIntrinsicHeight : DEF_DIVIDER_HEIGHT;
+                    }
+                } else if(layoutManagerOrientation == OrientationHelper.HORIZONTAL && mVerticalDividerHeight <= 0) {
+                    if (null != mVerticalDivider && mVerticalDivider.getIntrinsicHeight() > 0) {
+                        mVerticalDividerHeight = mVerticalDivider.getIntrinsicHeight();
+                    } else {
+                        mVerticalDividerHeight = dividerIntrinsicHeight > 0 ? dividerIntrinsicHeight : DEF_DIVIDER_HEIGHT;
+                    }
+                }
+            } else {
+                if (mVerticalDividerHeight <= 0) {
+                    if (null != mVerticalDivider && mVerticalDivider.getIntrinsicHeight() > 0) {
+                        mVerticalDividerHeight = mVerticalDivider.getIntrinsicHeight();
+                    } else {
+                        mVerticalDividerHeight = dividerIntrinsicHeight > 0 ? dividerIntrinsicHeight : DEF_DIVIDER_HEIGHT;
+                    }
+                }
+
+                if (mHorizontalDividerHeight <= 0) {
+                    if (null != mHorizontalDivider && mHorizontalDivider.getIntrinsicHeight() > 0) {
+                        mHorizontalDividerHeight = mHorizontalDivider.getIntrinsicHeight();
+                    } else {
+                        mHorizontalDividerHeight = dividerIntrinsicHeight > 0 ? dividerIntrinsicHeight : DEF_DIVIDER_HEIGHT;
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -122,6 +231,8 @@ public class FamiliarRecyclerView extends RecyclerView {
     public void setLayoutManager(LayoutManager layout) {
         super.setLayoutManager(layout);
 
+        if (null == layout) return ;
+
         if (layout instanceof GridLayoutManager) {
             mCurGridLayoutManager = ((GridLayoutManager) layout);
             mCurGridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -137,15 +248,19 @@ public class FamiliarRecyclerView extends RecyclerView {
                 }
             });
 
-            mLayoutManagerType = FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_GRID;
+            mLayoutManagerType = LAYOUT_MANAGER_TYPE_GRID;
+            setDivider(mVerticalDivider, mHorizontalDivider);
         } else if (layout instanceof StaggeredGridLayoutManager) {
-            mLayoutManagerType = FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_STAGGERED_GRID;
-        } else {
-            // LinearLayoutManager
-            mLayoutManagerType = FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_LINEAR;
+            mLayoutManagerType = LAYOUT_MANAGER_TYPE_STAGGERED_GRID;
+            setDivider(mVerticalDivider, mHorizontalDivider);
+        } else if (layout instanceof LinearLayoutManager) {
+            mLayoutManagerType = LAYOUT_MANAGER_TYPE_LINEAR;
+            if (((LinearLayoutManager)layout).getOrientation() == LinearLayoutManager.HORIZONTAL) {
+                setDividerVertical(mVerticalDivider);
+            } else {
+                setDividerHorizontal(mHorizontalDivider);
+            }
         }
-
-        setDivider(mDivider);
     }
 
     @Override
@@ -169,8 +284,10 @@ public class FamiliarRecyclerView extends RecyclerView {
             mFamiliarDefaultItemDecoration = null;
         }
 
-        mFamiliarDefaultItemDecoration = new FamiliarDefaultItemDecoration(this, mDivider, mDividerHeight);
+        mFamiliarDefaultItemDecoration = new FamiliarDefaultItemDecoration(this, mVerticalDivider, mHorizontalDivider, mVerticalDividerHeight, mHorizontalDividerHeight);
         mFamiliarDefaultItemDecoration.setItemViewBothSidesMargin(mItemViewBothSidesMargin);
+        mFamiliarDefaultItemDecoration.setHeaderDividersEnabled(isHeaderDividersEnabled);
+        mFamiliarDefaultItemDecoration.setFooterDividersEnabled(isFooterDividersEnabled);
         super.addItemDecoration(mFamiliarDefaultItemDecoration);
     }
 
@@ -200,23 +317,100 @@ public class FamiliarRecyclerView extends RecyclerView {
     }
 
     public void setDivider(Drawable divider) {
-        if (!isDefaultItemDecoration || (null != divider && mDividerHeight <= 0)) return ;
+        if (!isDefaultItemDecoration || (mVerticalDividerHeight <= 0 && mHorizontalDividerHeight <= 0)) return ;
 
-        this.mDivider = divider;
+        if (this.mVerticalDivider != divider) {
+            this.mVerticalDivider = divider;
+        }
+
+        if (this.mHorizontalDivider != divider) {
+            this.mHorizontalDivider = divider;
+        }
 
         if (null == mFamiliarDefaultItemDecoration) {
             addDefaultItemDecoration();
         } else {
-            mFamiliarDefaultItemDecoration.setDividerDrawable(mDivider);
+            mFamiliarDefaultItemDecoration.setVerticalDividerDrawable(mVerticalDivider);
+            mFamiliarDefaultItemDecoration.setHorizontalDividerDrawable(mHorizontalDivider);
+            invalidate();
+        }
+    }
+
+    public void setDivider(Drawable dividerVertical, Drawable dividerHorizontal) {
+        if (!isDefaultItemDecoration || (mVerticalDividerHeight <= 0 && mHorizontalDividerHeight <= 0)) return ;
+
+        if (this.mVerticalDivider != dividerVertical) {
+            this.mVerticalDivider = dividerVertical;
+        }
+
+        if (this.mHorizontalDivider != dividerHorizontal) {
+            this.mHorizontalDivider = dividerHorizontal;
+        }
+
+        if (null == mFamiliarDefaultItemDecoration) {
+            addDefaultItemDecoration();
+        } else {
+            mFamiliarDefaultItemDecoration.setVerticalDividerDrawable(mVerticalDivider);
+            mFamiliarDefaultItemDecoration.setHorizontalDividerDrawable(mHorizontalDivider);
+            invalidate();
+        }
+    }
+
+    public void setDividerVertical(Drawable dividerVertical) {
+        if (!isDefaultItemDecoration || mVerticalDividerHeight <= 0) return ;
+
+        if (this.mVerticalDivider != dividerVertical) {
+            this.mVerticalDivider = dividerVertical;
+        }
+
+        if (null == mFamiliarDefaultItemDecoration) {
+            addDefaultItemDecoration();
+        } else {
+            mFamiliarDefaultItemDecoration.setVerticalDividerDrawable(mVerticalDivider);
+            invalidate();
+        }
+    }
+
+    public void setDividerHorizontal(Drawable dividerHorizontal) {
+        if (!isDefaultItemDecoration || mHorizontalDividerHeight <= 0) return ;
+
+        if (this.mHorizontalDivider != dividerHorizontal) {
+            this.mHorizontalDivider = dividerHorizontal;
+        }
+
+        if (null == mFamiliarDefaultItemDecoration) {
+            addDefaultItemDecoration();
+        } else {
+            mFamiliarDefaultItemDecoration.setHorizontalDividerDrawable(mHorizontalDivider);
             invalidate();
         }
     }
 
     public void setDividerHeight(int height) {
-        this.mDividerHeight = height;
+        this.mVerticalDividerHeight = height;
+        this.mHorizontalDividerHeight = height;
 
         if (isDefaultItemDecoration && null != mFamiliarDefaultItemDecoration) {
-            mFamiliarDefaultItemDecoration.setDividerDrawableSize(height);
+            mFamiliarDefaultItemDecoration.setVerticalDividerDrawableHeight(mVerticalDividerHeight);
+            mFamiliarDefaultItemDecoration.setHorizontalDividerDrawableHeight(mHorizontalDividerHeight);
+            invalidate();
+        }
+    }
+
+    public void setDividerVerticalHeight(int height) {
+        this.mVerticalDividerHeight = height;
+
+        if (isDefaultItemDecoration && null != mFamiliarDefaultItemDecoration) {
+            mFamiliarDefaultItemDecoration.setVerticalDividerDrawableHeight(mVerticalDividerHeight);
+            invalidate();
+        }
+    }
+
+    public void setDividerHorizontalHeight(int height) {
+        this.mHorizontalDividerHeight = height;
+
+        if (isDefaultItemDecoration && null != mFamiliarDefaultItemDecoration) {
+            mFamiliarDefaultItemDecoration.setHorizontalDividerDrawableHeight(mHorizontalDividerHeight);
             invalidate();
         }
     }
@@ -270,11 +464,11 @@ public class FamiliarRecyclerView extends RecyclerView {
         if (null == layoutManager) return -1;
 
         switch (mLayoutManagerType) {
-            case FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_LINEAR:
+            case LAYOUT_MANAGER_TYPE_LINEAR:
                 return ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
-            case FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_GRID:
+            case LAYOUT_MANAGER_TYPE_GRID:
                 return ((GridLayoutManager) layoutManager).findFirstVisibleItemPosition();
-            case FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_STAGGERED_GRID:
+            case LAYOUT_MANAGER_TYPE_STAGGERED_GRID:
                 int[] firstVisibleItemPositions = ((StaggeredGridLayoutManager) layoutManager).findFirstVisibleItemPositions(null);
                 return firstVisibleItemPositions.length > 0 ? firstVisibleItemPositions[0] : -1;
         }
@@ -283,6 +477,7 @@ public class FamiliarRecyclerView extends RecyclerView {
     }
 
     public void setHeaderDividersEnabled(boolean isHeaderDividersEnabled) {
+        this.isHeaderDividersEnabled = isHeaderDividersEnabled;
         if (isDefaultItemDecoration && null != mFamiliarDefaultItemDecoration) {
             mFamiliarDefaultItemDecoration.setHeaderDividersEnabled(isHeaderDividersEnabled);
             invalidate();
@@ -290,6 +485,7 @@ public class FamiliarRecyclerView extends RecyclerView {
     }
 
     public void setFooterDividersEnabled(boolean isFooterDividersEnabled) {
+        this.isFooterDividersEnabled = isFooterDividersEnabled;
         if (isDefaultItemDecoration && null != mFamiliarDefaultItemDecoration) {
             mFamiliarDefaultItemDecoration.setFooterDividersEnabled(isFooterDividersEnabled);
             invalidate();

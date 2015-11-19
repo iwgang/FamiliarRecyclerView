@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
-        app:hrv_divider="#FF3300"
-        app:hrv_dividerHeight="20dp" />
+        app:frv_divider="#FF3300"
+        app:frv_dividerHeight="20dp" />
 
 </RelativeLayout>

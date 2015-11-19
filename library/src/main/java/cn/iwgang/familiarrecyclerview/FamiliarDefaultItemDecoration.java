@@ -5,10 +5,10 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
-import android.widget.LinearLayout;
 
 /**
  * FamiliarRecyclerView Default ItemDecoration
@@ -16,54 +16,59 @@ import android.widget.LinearLayout;
  * https://github.com/iwgang/FamiliarRecyclerView
  */
 public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
-    private Drawable mDividerDrawable;
-    private int mDividerDrawableSize;
+    private Drawable mVerticalDividerDrawable;
+    private Drawable mHorizontalDividerDrawable;
+    private int mVerticalDividerDrawableHeight;
+    private int mHorizontalDividerDrawableHeight;
     private int mItemViewBothSidesMargin;
 
-    private int mLayoutManagerType = FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_LINEAR; // FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_*
-    private int mOrientation = LinearLayout.VERTICAL; // LinearLayout.VERTICAL or LinearLayout.HORIZONTAL
+    private int mLayoutManagerType = FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_LINEAR; // FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_*
+    private int mOrientation = OrientationHelper.VERTICAL; // OrientationHelper.VERTICAL or OrientationHelper.HORIZONTAL
     private int mGridSpanCount = 0;
     private boolean isHeaderDividersEnabled;
     private boolean isFooterDividersEnabled;
-
-    private boolean isPl = false;
-
     private float mUnDivisibleValue = 0;
     private boolean isDivisible = true;
 
-    public FamiliarDefaultItemDecoration(RecyclerView mRecyclerView, Drawable mDividerDrawable, int mDividerDrawableHeight) {
-        this.mDividerDrawable = mDividerDrawable;
-        this.mDividerDrawableSize = mDividerDrawableHeight;
+    public FamiliarDefaultItemDecoration(RecyclerView recyclerView, Drawable dividerVertical, Drawable dividerHorizontal, int dividerDrawableSizeVertical, int dividerDrawableSizeHorizontal) {
+        this.mVerticalDividerDrawable = dividerVertical;
+        this.mHorizontalDividerDrawable = dividerHorizontal;
+        this.mVerticalDividerDrawableHeight = dividerDrawableSizeVertical;
+        this.mHorizontalDividerDrawableHeight = dividerDrawableSizeHorizontal;
 
+        init(recyclerView);
+    }
+
+    private void init(RecyclerView mRecyclerView) {
         RecyclerView.LayoutManager mLayoutManager = mRecyclerView.getLayoutManager();
         if (mLayoutManager.getClass().isAssignableFrom(LinearLayoutManager.class)) {
-            mLayoutManagerType = FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_LINEAR;
+            mLayoutManagerType = FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_LINEAR;
 
             LinearLayoutManager curLinearLayoutManager = (LinearLayoutManager)mLayoutManager;
             if (curLinearLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
-                mOrientation = LinearLayout.HORIZONTAL;
+                mOrientation = OrientationHelper.HORIZONTAL;
             } else {
-                mOrientation = LinearLayout.VERTICAL;
+                mOrientation = OrientationHelper.VERTICAL;
             }
         } else if (mLayoutManager.getClass().isAssignableFrom(GridLayoutManager.class)) {
-            mLayoutManagerType = FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_GRID;
+            mLayoutManagerType = FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_GRID;
 
             GridLayoutManager curGridLayoutManager = (GridLayoutManager)mLayoutManager;
             mGridSpanCount = curGridLayoutManager.getSpanCount();
             if (curGridLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
-                mOrientation = LinearLayout.HORIZONTAL;
+                mOrientation = OrientationHelper.HORIZONTAL;
             } else {
-                mOrientation = LinearLayout.VERTICAL;
+                mOrientation = OrientationHelper.VERTICAL;
             }
         } else if (mLayoutManager.getClass().isAssignableFrom(StaggeredGridLayoutManager.class)) {
-            mLayoutManagerType = FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_STAGGERED_GRID;
+            mLayoutManagerType = FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID;
 
             StaggeredGridLayoutManager curStaggeredGridLayoutManager = (StaggeredGridLayoutManager)mLayoutManager;
             mGridSpanCount = curStaggeredGridLayoutManager.getSpanCount();
             if (curStaggeredGridLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
-                mOrientation = LinearLayout.HORIZONTAL;
+                mOrientation = OrientationHelper.HORIZONTAL;
             } else {
-                mOrientation = LinearLayout.VERTICAL;
+                mOrientation = OrientationHelper.VERTICAL;
             }
         }
 
@@ -71,8 +76,10 @@ public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     private void initDivisible() {
-        if (mGridSpanCount > 0 && mDividerDrawableSize % mGridSpanCount != 0) {
-            float t1 = (float)mDividerDrawableSize / mGridSpanCount;
+        int tempDividerDrawableSize = mOrientation == OrientationHelper.VERTICAL ? mHorizontalDividerDrawableHeight : mVerticalDividerDrawableHeight;
+
+        if (mGridSpanCount > 0 && tempDividerDrawableSize % mGridSpanCount != 0) {
+            float t1 = (float)tempDividerDrawableSize / mGridSpanCount;
             mUnDivisibleValue = t1 - (int)t1;
             isDivisible = false;
         } else {
@@ -81,18 +88,26 @@ public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
         }
     }
 
-    public void setItemViewBothSidesMargin (int itemViewBothSidesMargin) {
-        this.mItemViewBothSidesMargin = itemViewBothSidesMargin;
+    public void setVerticalDividerDrawable(Drawable verticalDividerDrawable) {
+        this.mVerticalDividerDrawable = verticalDividerDrawable;
     }
 
-    public void setDividerDrawableSize(int dividerDrawableSize) {
-        this.mDividerDrawableSize = dividerDrawableSize;
+    public void setHorizontalDividerDrawable(Drawable horizontalDividerDrawable) {
+        this.mHorizontalDividerDrawable = horizontalDividerDrawable;
+    }
 
+    public void setVerticalDividerDrawableHeight(int verticalDividerDrawableHeight) {
+        this.mVerticalDividerDrawableHeight = verticalDividerDrawableHeight;
         initDivisible();
     }
 
-    public void setDividerDrawable(Drawable dividerDrawable) {
-        this.mDividerDrawable = dividerDrawable;
+    public void setHorizontalDividerDrawableHeight(int horizontalDividerDrawableHeight) {
+        this.mHorizontalDividerDrawableHeight = horizontalDividerDrawableHeight;
+        initDivisible();
+    }
+
+    public void setItemViewBothSidesMargin (int itemViewBothSidesMargin) {
+        this.mItemViewBothSidesMargin = itemViewBothSidesMargin;
     }
 
     public void setHeaderDividersEnabled(boolean isHeaderDividersEnabled) {
@@ -105,7 +120,7 @@ public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
 
     @Override
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
-        if (null != mDividerDrawable) {
+        if (null != mVerticalDividerDrawable || null != mHorizontalDividerDrawable) {
             drawDividerDrawable(c, parent);
         }
     }
@@ -146,111 +161,109 @@ public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
 
             if (isHeadViewPos(headersCount, position)) {
                 // head
-                if (mOrientation == LinearLayout.HORIZONTAL) {
+                if (mOrientation == OrientationHelper.HORIZONTAL) {
                     final int left = childView.getRight() + childViewParams.rightMargin;
-                    final int right = left + mDividerDrawableSize;
-                    mDividerDrawable.setBounds(left, parentTop, right, parentBottom);
-                    mDividerDrawable.draw(c);
+                    final int right = left + mVerticalDividerDrawableHeight;
+                    mVerticalDividerDrawable.setBounds(left, parentTop, right, parentBottom);
+                    mVerticalDividerDrawable.draw(c);
                 } else {
                     final int top = childView.getBottom() + childViewParams.bottomMargin;
-                    final int bottom = top + mDividerDrawableSize;
-                    mDividerDrawable.setBounds(parentLeft, top, parentRight, bottom);
-                    mDividerDrawable.draw(c);
+                    final int bottom = top + mHorizontalDividerDrawableHeight;
+                    mHorizontalDividerDrawable.setBounds(parentLeft, top, parentRight, bottom);
+                    mHorizontalDividerDrawable.draw(c);
                 }
                 continue;
             } else if (isFooterViewPos(headersCount, footerCount, itemViewCount, position)) {
                 // footer
-                if (mOrientation == LinearLayout.HORIZONTAL) {
-                    final int left = childView.getLeft() - childViewParams.leftMargin - mDividerDrawableSize;
-                    final int right = left + mDividerDrawableSize;
-                    mDividerDrawable.setBounds(left, parentTop, right, parentBottom);
-                    mDividerDrawable.draw(c);
+                if (mOrientation == OrientationHelper.HORIZONTAL) {
+                    final int left = childView.getLeft() - childViewParams.leftMargin - mVerticalDividerDrawableHeight;
+                    final int right = left + mVerticalDividerDrawableHeight;
+                    mVerticalDividerDrawable.setBounds(left, parentTop, right, parentBottom);
+                    mVerticalDividerDrawable.draw(c);
                 } else {
-                    int top = childView.getTop() - childViewParams.topMargin - mDividerDrawableSize;
-                    int bottom = top + mDividerDrawableSize;
-                    mDividerDrawable.setBounds(parentLeft, top, parentRight, bottom);
-                    mDividerDrawable.draw(c);
+                    int top = childView.getTop() - childViewParams.topMargin - mHorizontalDividerDrawableHeight;
+                    int bottom = top + mHorizontalDividerDrawableHeight;
+                    mHorizontalDividerDrawable.setBounds(parentLeft, top, parentRight, bottom);
+                    mHorizontalDividerDrawable.draw(c);
                 }
                 continue;
             }
 
             switch (mLayoutManagerType) {
-                case FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_LINEAR:
-                    if (mOrientation == LinearLayout.VERTICAL) {
+                case FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_LINEAR:
+                    if (mOrientation == OrientationHelper.VERTICAL) {
                         if (position + 1 != itemViewCount + headersCount) {
                             final int top = childView.getBottom() + childViewParams.bottomMargin;
-                            final int bottom = top + mDividerDrawableSize;
-                            mDividerDrawable.setBounds(parentLeft + mItemViewBothSidesMargin, top, parentRight - mItemViewBothSidesMargin, bottom);
-                            mDividerDrawable.draw(c);
+                            final int bottom = top + mHorizontalDividerDrawableHeight;
+                            mHorizontalDividerDrawable.setBounds(parentLeft + mItemViewBothSidesMargin, top, parentRight - mItemViewBothSidesMargin, bottom);
+                            mHorizontalDividerDrawable.draw(c);
                         }
                     } else {
                         final int left = childView.getRight() + childViewParams.rightMargin;
-                        final int right = left + mDividerDrawableSize;
-                        mDividerDrawable.setBounds(left, parentTop + mItemViewBothSidesMargin, right, parentBottom - mItemViewBothSidesMargin);
-                        mDividerDrawable.draw(c);
+                        final int right = left + mVerticalDividerDrawableHeight;
+                        mVerticalDividerDrawable.setBounds(left, parentTop + mItemViewBothSidesMargin, right, parentBottom - mItemViewBothSidesMargin);
+                        mVerticalDividerDrawable.draw(c);
                     }
                     break;
-                case FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_GRID:
-                case FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_STAGGERED_GRID:
+                case FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_GRID:
+                case FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID:
                     isGridItemLayoutLastRow = isGridItemLayoutLastRow(position, itemViewCount, headersCount);
                     isGridItemLayoutLastColumn = isGridItemLayoutLastColumn(position, headersCount, childView);
 
-                    if (mLayoutManagerType == FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_GRID && position == (itemViewCount + headersCount - 1)) {
+                    if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_GRID && position == (itemViewCount + headersCount - 1)) {
                         isGridLayoutLastNum = true;
                     }
 
-                    if (mOrientation == LinearLayout.HORIZONTAL) {
+                    if (mOrientation == OrientationHelper.HORIZONTAL) {
                         if (!isGridLayoutLastNum && !isGridItemLayoutLastColumn) {
                             int horizontalLeft = childView.getLeft() - childViewParams.leftMargin;
                             int horizontalTop = childView.getBottom() + childViewParams.bottomMargin;
                             int horizontalRight = childView.getRight() + childViewParams.rightMargin;
-                            if (!isGridItemLayoutLastRow) {
-                                horizontalRight += mDividerDrawableSize;
+                            int horizontalBottom = horizontalTop + mHorizontalDividerDrawableHeight;
+                            if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID && !isGridItemLayoutLastRow) {
+                                horizontalRight += mVerticalDividerDrawableHeight;
                             }
-                            int horizontalBottom = horizontalTop + mDividerDrawableSize;
-                            mDividerDrawable.setBounds(horizontalLeft, horizontalTop, horizontalRight, horizontalBottom);
-                            mDividerDrawable.draw(c);
+                            mHorizontalDividerDrawable.setBounds(horizontalLeft, horizontalTop, horizontalRight, horizontalBottom);
+                            mHorizontalDividerDrawable.draw(c);
                         }
 
                         if (!isGridItemLayoutLastRow) {
                             int verticalLeft = childView.getRight() + childViewParams.rightMargin;
                             int verticalTop = childView.getTop() - childViewParams.topMargin;
-                            int verticalRight = verticalLeft + mDividerDrawableSize;
+                            int verticalRight = verticalLeft + mVerticalDividerDrawableHeight;
                             int verticalBottom = childView.getBottom() + childViewParams.bottomMargin;
-                            mDividerDrawable.setBounds(verticalLeft, verticalTop, verticalRight, verticalBottom);
-                            mDividerDrawable.draw(c);
+
+                            if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_GRID && !isGridItemLayoutLastColumn) {
+                                verticalBottom += mHorizontalDividerDrawableHeight;
+                            }
+
+                            mVerticalDividerDrawable.setBounds(verticalLeft, verticalTop, verticalRight, verticalBottom);
+                            mVerticalDividerDrawable.draw(c);
                         }
                     } else {
-                        if (mLayoutManagerType == FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_GRID) {
-                            if (!isGridLayoutLastNum && !isGridItemLayoutLastColumn) {
-                                int verticalLeft = childView.getRight() + childViewParams.rightMargin;
-                                int verticalTop = childView.getTop() - childViewParams.topMargin;
-                                int verticalRight = verticalLeft + mDividerDrawableSize;
-                                int verticalBottom = childView.getBottom() + childViewParams.bottomMargin;
-                                mDividerDrawable.setBounds(verticalLeft, verticalTop, verticalRight, verticalBottom);
-                                mDividerDrawable.draw(c);
+                        if ((mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_GRID && !isGridLayoutLastNum && !isGridItemLayoutLastColumn)
+                                || (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID && !isGridItemLayoutLastColumn)) {
+                            int verticalLeft = childView.getRight() + childViewParams.rightMargin;
+                            int verticalTop = childView.getTop() - childViewParams.topMargin;
+                            int verticalRight = verticalLeft + mVerticalDividerDrawableHeight;
+                            int verticalBottom = childView.getBottom() + childViewParams.bottomMargin;
+                            if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID && !isGridItemLayoutLastRow) {
+                                verticalBottom += mHorizontalDividerDrawableHeight;
                             }
-                        } else {
-                            if (!isGridItemLayoutLastColumn) {
-                                int verticalLeft = childView.getRight() + childViewParams.rightMargin;
-                                int verticalTop = childView.getTop() - childViewParams.topMargin;
-                                int verticalRight = verticalLeft + mDividerDrawableSize;
-                                int verticalBottom = childView.getBottom() + childViewParams.bottomMargin;
-                                mDividerDrawable.setBounds(verticalLeft, verticalTop, verticalRight, verticalBottom);
-                                mDividerDrawable.draw(c);
-                            }
+                            mVerticalDividerDrawable.setBounds(verticalLeft, verticalTop, verticalRight, verticalBottom);
+                            mVerticalDividerDrawable.draw(c);
                         }
 
                         if (!isGridItemLayoutLastRow) {
                             int horizontalLeft = childView.getLeft() - childViewParams.leftMargin;
                             int horizontalTop = childView.getBottom() + childViewParams.bottomMargin;
                             int horizontalRight = childView.getRight() + childViewParams.rightMargin;
-                            int horizontalBottom = horizontalTop + mDividerDrawableSize;
-                            if (!isGridItemLayoutLastColumn) {
-                                horizontalRight += mDividerDrawableSize;
+                            int horizontalBottom = horizontalTop + mHorizontalDividerDrawableHeight;
+                            if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_GRID && !isGridItemLayoutLastColumn) {
+                                horizontalRight += mVerticalDividerDrawableHeight;
                             }
-                            mDividerDrawable.setBounds(horizontalLeft, horizontalTop, horizontalRight, horizontalBottom);
-                            mDividerDrawable.draw(c);
+                            mHorizontalDividerDrawable.setBounds(horizontalLeft, horizontalTop, horizontalRight, horizontalBottom);
+                            mHorizontalDividerDrawable.draw(c);
                         }
                     }
                     break;
@@ -282,26 +295,26 @@ public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
 
         if (isHeadViewPos(headersCount, position)) {
             // head
-            if (mOrientation == LinearLayout.HORIZONTAL) {
-                outRect.set(0, 0, mDividerDrawableSize, 0);
+            if (mOrientation == OrientationHelper.HORIZONTAL) {
+                outRect.set(0, 0, mVerticalDividerDrawableHeight, 0);
             } else {
-                outRect.set(0, 0, 0, mDividerDrawableSize);
+                outRect.set(0, 0, 0, mHorizontalDividerDrawableHeight);
             }
             return ;
         } else if (isFooterViewPos(headersCount, footerCount, itemViewCount, position)) {
             // footer
-            if (mOrientation == LinearLayout.HORIZONTAL) {
-                outRect.set(mDividerDrawableSize, 0, 0, 0);
+            if (mOrientation == OrientationHelper.HORIZONTAL) {
+                outRect.set(mVerticalDividerDrawableHeight, 0, 0, 0);
             } else {
-                outRect.set(0, mDividerDrawableSize, 0, 0);
+                outRect.set(0, mHorizontalDividerDrawableHeight, 0, 0);
             }
             return ;
         }
 
-        if (mLayoutManagerType == FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_GRID
-                || mLayoutManagerType == FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_STAGGERED_GRID) {
+        if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_GRID
+                || mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID) {
             int curGridNum;
-            if (mLayoutManagerType == FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_GRID) {
+            if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_GRID) {
                 curGridNum = (position - headersCount) % mGridSpanCount;
             } else {
                 curGridNum = ((StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams()).getSpanIndex();
@@ -310,13 +323,14 @@ public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
             int leftOrTopOffset, rightOrBottomOffset;
             float mDividerLeftBaseOffset, mDividerRightBaseOffset;
 
+            final int tempDividerDrawableSize = mOrientation == OrientationHelper.HORIZONTAL ? mHorizontalDividerDrawableHeight : mVerticalDividerDrawableHeight;
             if (mItemViewBothSidesMargin > 0) {
                 // item view left and right margin
-                mDividerLeftBaseOffset = (float)mDividerDrawableSize / mGridSpanCount * curGridNum - mItemViewBothSidesMargin * 2 / mGridSpanCount * curGridNum + mItemViewBothSidesMargin;
-                mDividerRightBaseOffset = (float)mDividerDrawableSize / mGridSpanCount * (mGridSpanCount - (curGridNum + 1)) + mItemViewBothSidesMargin * 2 / mGridSpanCount * (curGridNum + 1) - mItemViewBothSidesMargin;
+                mDividerLeftBaseOffset = (float)tempDividerDrawableSize / mGridSpanCount * curGridNum - mItemViewBothSidesMargin * 2 / mGridSpanCount * curGridNum + mItemViewBothSidesMargin;
+                mDividerRightBaseOffset = (float)tempDividerDrawableSize / mGridSpanCount * (mGridSpanCount - (curGridNum + 1)) + mItemViewBothSidesMargin * 2 / mGridSpanCount * (curGridNum + 1) - mItemViewBothSidesMargin;
             } else {
-                mDividerLeftBaseOffset = (float)mDividerDrawableSize / mGridSpanCount * curGridNum;
-                mDividerRightBaseOffset = (float)mDividerDrawableSize / mGridSpanCount * (mGridSpanCount - (curGridNum + 1));
+                mDividerLeftBaseOffset = (float)tempDividerDrawableSize / mGridSpanCount * curGridNum;
+                mDividerRightBaseOffset = (float)tempDividerDrawableSize / mGridSpanCount * (mGridSpanCount - (curGridNum + 1));
             }
 
             if (!isDivisible && mUnDivisibleValue > 0) {
@@ -330,13 +344,13 @@ public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
             if (isGridItemLayoutLastRow(position, itemViewCount, headersCount)) {
                 // last row
                 if (isGridItemLayoutLastColumn(position, headersCount, view)) {
-                    if (mOrientation == LinearLayout.HORIZONTAL) {
+                    if (mOrientation == OrientationHelper.HORIZONTAL) {
                         outRect.set(0, leftOrTopOffset, 0, mItemViewBothSidesMargin);
                     } else {
                         outRect.set(leftOrTopOffset, 0, mItemViewBothSidesMargin, 0);
                     }
                 } else {
-                    if (mOrientation == LinearLayout.HORIZONTAL) {
+                    if (mOrientation == OrientationHelper.HORIZONTAL) {
                         outRect.set(0, leftOrTopOffset, 0, rightOrBottomOffset);
                     } else {
                         outRect.set(leftOrTopOffset, 0, rightOrBottomOffset, 0);
@@ -344,46 +358,46 @@ public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
                 }
             } else if (isGridItemLayoutLastColumn(position, headersCount, view)) {
                 // last column
-                if (mOrientation == LinearLayout.HORIZONTAL) {
-                    outRect.set(0, leftOrTopOffset, mDividerDrawableSize, mItemViewBothSidesMargin);
+                if (mOrientation == OrientationHelper.HORIZONTAL) {
+                    outRect.set(0, leftOrTopOffset, mVerticalDividerDrawableHeight, mItemViewBothSidesMargin);
                 } else {
-                    outRect.set(leftOrTopOffset, 0, mItemViewBothSidesMargin, mDividerDrawableSize);
+                    outRect.set(leftOrTopOffset, 0, mItemViewBothSidesMargin, mHorizontalDividerDrawableHeight);
                 }
             } else if (isGridItemLayoutFirstColumn(position, headersCount, view)) {
                 // first column
-                if (mOrientation == LinearLayout.HORIZONTAL) {
-                    outRect.set(0, mItemViewBothSidesMargin, mDividerDrawableSize, rightOrBottomOffset);
+                if (mOrientation == OrientationHelper.HORIZONTAL) {
+                    outRect.set(0, mItemViewBothSidesMargin, mVerticalDividerDrawableHeight, rightOrBottomOffset);
                 } else {
-                    outRect.set(mItemViewBothSidesMargin, 0, rightOrBottomOffset, mDividerDrawableSize);
+                    outRect.set(mItemViewBothSidesMargin, 0, rightOrBottomOffset, mHorizontalDividerDrawableHeight);
                 }
             } else {
                 // middle column
-                if (mOrientation == LinearLayout.HORIZONTAL) {
-                    outRect.set(0, leftOrTopOffset, mDividerDrawableSize, rightOrBottomOffset);
+                if (mOrientation == OrientationHelper.HORIZONTAL) {
+                    outRect.set(0, leftOrTopOffset, mVerticalDividerDrawableHeight, rightOrBottomOffset);
                 } else {
-                    outRect.set(leftOrTopOffset, 0, rightOrBottomOffset, mDividerDrawableSize);
+                    outRect.set(leftOrTopOffset, 0, rightOrBottomOffset, mHorizontalDividerDrawableHeight);
                 }
             }
         } else {
-            if (mOrientation == LinearLayout.HORIZONTAL) {
+            if (mOrientation == OrientationHelper.HORIZONTAL) {
                 if (mItemViewBothSidesMargin > 0) {
                     if (position + 1 == itemViewCount + headersCount) {
                         outRect.set(0, mItemViewBothSidesMargin, 0, mItemViewBothSidesMargin);
                     } else {
-                        outRect.set(0, mItemViewBothSidesMargin, mDividerDrawableSize, mItemViewBothSidesMargin);
+                        outRect.set(0, mItemViewBothSidesMargin, mVerticalDividerDrawableHeight, mItemViewBothSidesMargin);
                     }
                 } else {
-                    outRect.set(0, 0, mDividerDrawableSize, 0);
+                    outRect.set(0, 0, mVerticalDividerDrawableHeight, 0);
                 }
             } else {
                 if (mItemViewBothSidesMargin > 0) {
                     if (position + 1 == itemViewCount + headersCount) {
                         outRect.set(mItemViewBothSidesMargin, 0, mItemViewBothSidesMargin, 0);
                     } else {
-                        outRect.set(mItemViewBothSidesMargin, 0, mItemViewBothSidesMargin, mDividerDrawableSize);
+                        outRect.set(mItemViewBothSidesMargin, 0, mItemViewBothSidesMargin, mHorizontalDividerDrawableHeight);
                     }
                 } else {
-                    outRect.set(0, 0, 0, mDividerDrawableSize);
+                    outRect.set(0, 0, 0, mHorizontalDividerDrawableHeight);
                 }
             }
         }
@@ -402,13 +416,13 @@ public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
 
         if ((!isFooterDividersEnabled || footerCount == 0) && position >= itemViewCount + headersCount) return true;
 
-        if (mLayoutManagerType == FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_LINEAR && mItemViewBothSidesMargin <= 0 && position + 1 == itemViewCount + headersCount) return true;
+        if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_LINEAR && mItemViewBothSidesMargin <= 0 && position + 1 == itemViewCount + headersCount) return true;
 
         return false;
     }
 
     private boolean isGridItemLayoutLastRow(int position, int itemViewCount, int headersCount) {
-        if (mLayoutManagerType == FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_LINEAR) return false;
+        if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_LINEAR) return false;
 
         return Math.ceil((float)itemViewCount / mGridSpanCount) == Math.ceil((float)(position - headersCount + 1) / mGridSpanCount);
     }
@@ -418,11 +432,11 @@ public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     private boolean isGridItemLayoutLastColumn(int position, int headersCount, View view) {
-        if (mLayoutManagerType == FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_GRID) {
+        if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_GRID) {
             if ((position + 1 - headersCount) % mGridSpanCount == 0) {
                 return true;
             }
-        } else if (mLayoutManagerType == FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_STAGGERED_GRID) {
+        } else if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID) {
             int spanIndex = ((StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams()).getSpanIndex();
             if (spanIndex == mGridSpanCount-1) return true;
         }
@@ -431,9 +445,9 @@ public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     private boolean isGridItemLayoutFirstColumn(int position, int headersCount, View view) {
-        if (mLayoutManagerType == FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_GRID) {
+        if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_GRID) {
             return (position + 1 - headersCount) % mGridSpanCount == 1;
-        } else if (mLayoutManagerType == FamiliarWrapRecyclerViewAdapter.LAYOUT_MANAGER_TYPE_STAGGERED_GRID) {
+        } else if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID) {
             int spanIndex = ((StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams()).getSpanIndex();
             if (spanIndex == 0) return true;
         }

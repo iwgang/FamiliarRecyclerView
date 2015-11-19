@@ -19,15 +19,11 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
     private static final int VIEW_TYPE_ITEM = 2;
     private static final int VIEW_TYPE_EMPTYVIEW = 3;
 
-    public static final int LAYOUT_MANAGER_TYPE_LINEAR = 0;
-    public static final int LAYOUT_MANAGER_TYPE_GRID = 1;
-    public static final int LAYOUT_MANAGER_TYPE_STAGGERED_GRID = 2;
-
     private List<View> mHeaderView;
     private List<View> mFooterView;
     private RecyclerView.Adapter mReqAdapter;
     private int curHeaderOrFooterPos;
-    private int mLayoutManagerType = LAYOUT_MANAGER_TYPE_LINEAR;
+    private int mLayoutManagerType = FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_LINEAR;
     private FamiliarRecyclerView.OnItemClickListener mOnItemClickListener;
     private FamiliarRecyclerView.OnItemLongClickListener mOnItemLongClickListener;
     private FamiliarRecyclerView mFamiliarRecyclerView;
@@ -105,7 +101,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
                 // create header view
                 EmptyHeaderOrFooterViewHolder headerViewHolder;
                 View tempHeadView = mHeaderView.get(curHeaderOrFooterPos);
-                if (mLayoutManagerType == LAYOUT_MANAGER_TYPE_STAGGERED_GRID) {
+                if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID) {
                     FrameLayout mContainerView = new FrameLayout(mHeaderView.get(curHeaderOrFooterPos).getContext());
                     mContainerView.addView(tempHeadView);
                     headerViewHolder = new EmptyHeaderOrFooterViewHolder(mContainerView);
@@ -121,7 +117,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
                 // create footer view
                 EmptyHeaderOrFooterViewHolder footerViewHolder;
                 View tempFooterView = mFooterView.get(curHeaderOrFooterPos);
-                if (mLayoutManagerType == LAYOUT_MANAGER_TYPE_STAGGERED_GRID) {
+                if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID) {
                     FrameLayout mContainerView = new FrameLayout(mHeaderView.get(curHeaderOrFooterPos).getContext());
                     mContainerView.addView(tempFooterView);
                     footerViewHolder = new EmptyHeaderOrFooterViewHolder(mContainerView);
@@ -137,7 +133,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
                 EmptyHeaderOrFooterViewHolder emptyViewHolder;
                 View emptyView = mFamiliarRecyclerView.getEmptyView();
                 emptyView.setVisibility(View.VISIBLE);
-                if (mLayoutManagerType == LAYOUT_MANAGER_TYPE_STAGGERED_GRID) {
+                if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID) {
                     FrameLayout mContainerView = new FrameLayout(emptyView.getContext());
                     mContainerView.addView(emptyView);
                     emptyViewHolder = new EmptyHeaderOrFooterViewHolder(mContainerView);

@@ -1,9 +1,8 @@
 package cn.iwgang.familiarrecyclerviewdemo;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,24 +18,30 @@ import java.util.List;
 
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerViewOnScrollListener;
-import jp.wasabeef.recyclerview.animators.FadeInLeftAnimator;
 
 public class LinearLayoutActivity extends ActionBarActivity {
     private FamiliarRecyclerView mRecyclerView;
     private List<String> mDatas;
     private MyAdapter mAdapter;
 
+    private View mScrolledToBottomAddFooterView = null;
     private boolean isVertical = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act_layout_linear);
+//        setContentView(R.layout.act_layout_linear);
 
         isVertical = getIntent().getBooleanExtra("isVertical", true);
 
+        if (isVertical) {
+            setContentView(R.layout.act_layout_linear_ver);
+        } else {
+            setContentView(R.layout.act_layout_linear_hor);
+        }
+
         mDatas = new ArrayList<>();
-        for (int i = 0; i < 22; i++) {
+        for (int i = 0; i < 10; i++) {
             mDatas.add("test:" + i);
         }
 
@@ -59,38 +64,50 @@ public class LinearLayoutActivity extends ActionBarActivity {
             }
         });
 
-        // LayoutManager
-        if (isVertical) {
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        } else {
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        }
+        // set LayoutManager in code
+//        if (isVertical) {
+//            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        } else {
+//            mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+//        }
 
         mRecyclerView.setOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecyclerView.getLayoutManager()) {
             @Override
             public void onScrolledToTop() {
                 Log.i("wg", "onScrolledToTop ...");
+
+                // remove footer view
+                if (null != mScrolledToBottomAddFooterView) {
+                    mRecyclerView.removeFooterView(mScrolledToBottomAddFooterView);
+                    mScrolledToBottomAddFooterView = null;
+                }
             }
 
             @Override
             public void onScrolledToBottom() {
                 Log.i("wg", "onScrolledToBottom ...");
+
+                // add footer view
+                if (null == mScrolledToBottomAddFooterView) {
+                    mScrolledToBottomAddFooterView = HeaderAndFooterViewUtil.getFooterView(LinearLayoutActivity.this, isVertical, 0xFF778899, "Foot View 1");
+                    mRecyclerView.addFooterView(mScrolledToBottomAddFooterView);
+                }
             }
         });
 
         // ItemAnimator
-        mRecyclerView.setItemAnimator(new FadeInLeftAnimator());
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        mRecyclerView.setHeaderDividersEnabled(true);
-        mRecyclerView.setFooterDividersEnabled(true);
+//        mRecyclerView.setHeaderDividersEnabled(true);
+//        mRecyclerView.setFooterDividersEnabled(true);
 
         // head view
         mRecyclerView.addHeaderView(HeaderAndFooterViewUtil.getHeadView(this, isVertical, 0xFFFF5000, "Head View 1"));
-        mRecyclerView.addHeaderView(HeaderAndFooterViewUtil.getHeadView(this, isVertical, Color.BLUE, "Head View 2"));
+//        mRecyclerView.addHeaderView(HeaderAndFooterViewUtil.getHeadView(this, isVertical, Color.BLUE, "Head View 2"));
 
         // footer view
-        mRecyclerView.addFooterView(HeaderAndFooterViewUtil.getFooterView(this, isVertical, 0xFF778899, "Foot View 1"));
-        mRecyclerView.addFooterView(HeaderAndFooterViewUtil.getFooterView(this, isVertical, Color.RED, "Foot View 2"));
+//        mRecyclerView.addFooterView(HeaderAndFooterViewUtil.getFooterView(this, isVertical, 0xFF778899, "Foot View 1"));
+//        mRecyclerView.addFooterView(HeaderAndFooterViewUtil.getFooterView(this, isVertical, Color.RED, "Foot View 2"));
 
         // empty view
         View emptyView = View.inflate(this, R.layout.empty_view, null);

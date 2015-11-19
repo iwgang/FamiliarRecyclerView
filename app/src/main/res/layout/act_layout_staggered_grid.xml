@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
-        app:hrv_divider="@android:color/transparent"
-        app:hrv_dividerHeight="8dp" />
+        app:frv_divider="@android:color/transparent"
+        app:frv_dividerHeight="8dp" />
 
 </RelativeLayout>

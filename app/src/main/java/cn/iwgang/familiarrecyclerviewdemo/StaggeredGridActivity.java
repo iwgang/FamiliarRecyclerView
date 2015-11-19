@@ -1,10 +1,9 @@
 package cn.iwgang.familiarrecyclerviewdemo;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,7 +18,6 @@ import java.util.List;
 
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerViewOnScrollListener;
-import jp.wasabeef.recyclerview.animators.FadeInLeftAnimator;
 
 public class StaggeredGridActivity extends ActionBarActivity {
     private FamiliarRecyclerView mRecyclerView;
@@ -32,13 +30,19 @@ public class StaggeredGridActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act_layout_staggered_grid);
+//        setContentView(R.layout.act_layout_staggered_grid);
 
         isVertical = getIntent().getBooleanExtra("isVertical", true);
 
+        if (isVertical) {
+            setContentView(R.layout.act_layout_staggered_grid_ver);
+        } else {
+            setContentView(R.layout.act_layout_staggered_grid_hor);
+        }
+
         mDatas = new ArrayList<>();
         mViewHeights = new ArrayList<>();
-        for (int i = 0; i < 22; i++) {
+        for (int i = 0; i < 12; i++) {
             mDatas.add("test:" + i);
             mViewHeights.add((int)(300 + Math.random() * 300));
         }
@@ -62,12 +66,12 @@ public class StaggeredGridActivity extends ActionBarActivity {
             }
         });
 
-        // LayoutManager
-        if (isVertical) {
-            mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
-        } else {
-            mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.HORIZONTAL));
-        }
+        // set LayoutManager in code
+//        if (isVertical) {
+//            mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
+//        } else {
+//            mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.HORIZONTAL));
+//        }
 
         mRecyclerView.setOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecyclerView.getLayoutManager()) {
             @Override
@@ -82,18 +86,18 @@ public class StaggeredGridActivity extends ActionBarActivity {
         });
 
         // ItemAnimator
-        mRecyclerView.setItemAnimator(new FadeInLeftAnimator());
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        mRecyclerView.setHeaderDividersEnabled(false);
-        mRecyclerView.setFooterDividersEnabled(false);
+//        mRecyclerView.setHeaderDividersEnabled(false);
+//        mRecyclerView.setFooterDividersEnabled(false);
 
         // head view
         mRecyclerView.addHeaderView(HeaderAndFooterViewUtil.getHeadView(this, isVertical, 0xFFFF5000, "Head View 1"));
-        mRecyclerView.addHeaderView(HeaderAndFooterViewUtil.getHeadView(this, isVertical, Color.BLUE, "Head View 2"));
+//        mRecyclerView.addHeaderView(HeaderAndFooterViewUtil.getHeadView(this, isVertical, Color.BLUE, "Head View 2"));
 
         // footer view
         mRecyclerView.addFooterView(HeaderAndFooterViewUtil.getFooterView(this, isVertical, 0xFF778899, "Foot View 1"));
-        mRecyclerView.addFooterView(HeaderAndFooterViewUtil.getFooterView(this, isVertical, Color.RED, "Foot View 2"));
+//        mRecyclerView.addFooterView(HeaderAndFooterViewUtil.getFooterView(this, isVertical, Color.RED, "Foot View 2"));
 
         mRecyclerView.setEmptyView(findViewById(R.id.tv_empty), true);
 

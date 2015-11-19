@@ -2,10 +2,27 @@
 <resources>
 
     <declare-styleable name="FamiliarRecyclerView">
-        <attr name="hrv_divider" format="reference|color" />
-        <attr name="hrv_dividerHeight" format="dimension" />
-        <attr name="hrv_itemViewBothSidesMargin" format="dimension" />
-        <attr name="hrv_emptyView" format="reference" />
+        <attr name="frv_divider" format="reference|color" />
+        <attr name="frv_dividerVertical" format="reference|color" />
+        <attr name="frv_dividerHorizontal" format="reference|color" />
+        <attr name="frv_dividerHeight" format="dimension" />
+        <attr name="frv_dividerVerticalHeight" format="dimension" />
+        <attr name="frv_dividerHorizontalHeight" format="dimension" />
+        <attr name="frv_itemViewBothSidesMargin" format="dimension" />
+        <attr name="frv_emptyView" format="reference" />
+        <attr name="frv_layoutManager" format="enum">
+            <enum name="linear" value="0" />
+            <enum name="grid" value="1" />
+            <enum name="staggeredGrid" value="2" />
+        </attr>
+        <attr name="frv_layoutManagerOrientation" format="enum">
+            <enum name="horizontal" value="0" />
+            <enum name="vertical" value="1" />
+        </attr>
+        <attr name="frv_spanCount" format="integer" />
+        <attr name="frv_isReverseLayout" format="boolean" />
+        <attr name="frv_headerDividersEnabled" format="boolean" />
+        <attr name="frv_footerDividersEnabled" format="boolean" />
     </declare-styleable>
 
 </resources>
