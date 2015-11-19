@@ -11,6 +11,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -181,9 +182,22 @@ public class FamiliarRecyclerView extends RecyclerView {
         if (mEmptyViewResId != -1) {
             if (null != getParent()) {
                 ViewGroup parentView = ((ViewGroup)getParent());
-                mEmptyView = parentView.findViewById(mEmptyViewResId);
-                if (isRetainShowHeadOrFoot) {
-                    parentView.removeView(mEmptyView);
+                View tempEmptyView1 = parentView.findViewById(mEmptyViewResId);
+
+                if (null != tempEmptyView1) {
+                    mEmptyView = tempEmptyView1;
+
+                    if (isRetainShowHeadOrFoot) parentView.removeView(tempEmptyView1);
+                } else {
+                    ViewParent pParentView = parentView.getParent();
+                    if (null != pParentView && pParentView instanceof ViewGroup) {
+                        View tempEmptyView2 = ((ViewGroup) pParentView).findViewById(mEmptyViewResId);
+                        if (null != tempEmptyView2) {
+                            mEmptyView = tempEmptyView2;
+
+                            if (isRetainShowHeadOrFoot) ((ViewGroup) pParentView).removeView(tempEmptyView2);
+                        }
+                    }
                 }
             }
             mEmptyViewResId = -1;
@@ -215,7 +229,7 @@ public class FamiliarRecyclerView extends RecyclerView {
 
         mReqAdapter.registerAdapterDataObserver(mEmptyAdapterDataObserver);
 
-        processEmptyView(mReqAdapter.getItemCount());
+            processEmptyView(mReqAdapter.getItemCount());
     }
 
     @Override
@@ -308,6 +322,10 @@ public class FamiliarRecyclerView extends RecyclerView {
         this.isRetainShowHeadOrFoot = isRetainShowHeadOrFoot;
     }
 
+    public void setEmptyViewRetainShowHeadOrFoot(boolean isRetainShowHeadOrFoot) {
+        this.isRetainShowHeadOrFoot = isRetainShowHeadOrFoot;
+    }
+
     public View getEmptyView() {
         return mEmptyView;
     }
@@ -332,7 +350,10 @@ public class FamiliarRecyclerView extends RecyclerView {
         } else {
             mFamiliarDefaultItemDecoration.setVerticalDividerDrawable(mVerticalDivider);
             mFamiliarDefaultItemDecoration.setHorizontalDividerDrawable(mHorizontalDivider);
-            invalidate();
+
+            if (null != mWrapFamiliarRecyclerViewAdapter) {
+                mWrapFamiliarRecyclerViewAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -352,7 +373,10 @@ public class FamiliarRecyclerView extends RecyclerView {
         } else {
             mFamiliarDefaultItemDecoration.setVerticalDividerDrawable(mVerticalDivider);
             mFamiliarDefaultItemDecoration.setHorizontalDividerDrawable(mHorizontalDivider);
-            invalidate();
+
+            if (null != mWrapFamiliarRecyclerViewAdapter) {
+                mWrapFamiliarRecyclerViewAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -367,7 +391,10 @@ public class FamiliarRecyclerView extends RecyclerView {
             addDefaultItemDecoration();
         } else {
             mFamiliarDefaultItemDecoration.setVerticalDividerDrawable(mVerticalDivider);
-            invalidate();
+
+            if (null != mWrapFamiliarRecyclerViewAdapter) {
+                mWrapFamiliarRecyclerViewAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -382,7 +409,10 @@ public class FamiliarRecyclerView extends RecyclerView {
             addDefaultItemDecoration();
         } else {
             mFamiliarDefaultItemDecoration.setHorizontalDividerDrawable(mHorizontalDivider);
-            invalidate();
+
+            if (null != mWrapFamiliarRecyclerViewAdapter) {
+                mWrapFamiliarRecyclerViewAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -393,7 +423,10 @@ public class FamiliarRecyclerView extends RecyclerView {
         if (isDefaultItemDecoration && null != mFamiliarDefaultItemDecoration) {
             mFamiliarDefaultItemDecoration.setVerticalDividerDrawableHeight(mVerticalDividerHeight);
             mFamiliarDefaultItemDecoration.setHorizontalDividerDrawableHeight(mHorizontalDividerHeight);
-            invalidate();
+
+            if (null != mWrapFamiliarRecyclerViewAdapter) {
+                mWrapFamiliarRecyclerViewAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -402,7 +435,10 @@ public class FamiliarRecyclerView extends RecyclerView {
 
         if (isDefaultItemDecoration && null != mFamiliarDefaultItemDecoration) {
             mFamiliarDefaultItemDecoration.setVerticalDividerDrawableHeight(mVerticalDividerHeight);
-            invalidate();
+
+            if (null != mWrapFamiliarRecyclerViewAdapter) {
+                mWrapFamiliarRecyclerViewAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -411,18 +447,28 @@ public class FamiliarRecyclerView extends RecyclerView {
 
         if (isDefaultItemDecoration && null != mFamiliarDefaultItemDecoration) {
             mFamiliarDefaultItemDecoration.setHorizontalDividerDrawableHeight(mHorizontalDividerHeight);
-            invalidate();
+
+            if (null != mWrapFamiliarRecyclerViewAdapter) {
+                mWrapFamiliarRecyclerViewAdapter.notifyDataSetChanged();
+            }
         }
     }
 
     public void addHeaderView(View v) {
+        addHeaderView(v, false);
+    }
+
+    public void addHeaderView(View v, boolean isScrollTo) {
         if (mHeaderView.contains(v)) return;
 
         mHeaderView.add(v);
         if (null != mReqAdapter) {
             int pos = mHeaderView.size() - 1;
             mReqAdapter.notifyItemInserted(pos);
-            scrollToPosition(pos);
+
+            if (isScrollTo) {
+                scrollToPosition(pos);
+            }
         }
     }
 
@@ -434,13 +480,19 @@ public class FamiliarRecyclerView extends RecyclerView {
     }
 
     public void addFooterView(View v) {
+        addFooterView(v, false);
+    }
+
+    public void addFooterView(View v, boolean isScrollTo) {
         if (mFooterView.contains(v)) return;
 
         mFooterView.add(v);
         if (null != mReqAdapter) {
             int pos = mReqAdapter.getItemCount() + getHeaderViewsCount() + mFooterView.size() - 1;
             mReqAdapter.notifyItemInserted(pos);
-            scrollToPosition(pos);
+            if (isScrollTo) {
+                scrollToPosition(pos);
+            }
         }
     }
 
@@ -480,7 +532,10 @@ public class FamiliarRecyclerView extends RecyclerView {
         this.isHeaderDividersEnabled = isHeaderDividersEnabled;
         if (isDefaultItemDecoration && null != mFamiliarDefaultItemDecoration) {
             mFamiliarDefaultItemDecoration.setHeaderDividersEnabled(isHeaderDividersEnabled);
-            invalidate();
+
+            if (null != mWrapFamiliarRecyclerViewAdapter) {
+                mWrapFamiliarRecyclerViewAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -488,7 +543,10 @@ public class FamiliarRecyclerView extends RecyclerView {
         this.isFooterDividersEnabled = isFooterDividersEnabled;
         if (isDefaultItemDecoration && null != mFamiliarDefaultItemDecoration) {
             mFamiliarDefaultItemDecoration.setFooterDividersEnabled(isFooterDividersEnabled);
-            invalidate();
+
+            if (null != mWrapFamiliarRecyclerViewAdapter) {
+                mWrapFamiliarRecyclerViewAdapter.notifyDataSetChanged();
+            }
         }
     }
 

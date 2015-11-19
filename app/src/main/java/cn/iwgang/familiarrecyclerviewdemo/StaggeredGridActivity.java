@@ -151,16 +151,12 @@ public class StaggeredGridActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.id_action_add:
-//                mDatas.add(0, "new " + mDatas.size() + 1);
-//                mAdapter.notifyItemInserted((mRecyclerView.getHeaderViewsCount() + 1) -1);
-
                 mAdapter.notifyItemInserted(mRecyclerView.getHeaderViewsCount() + mDatas.size());
                 mDatas.add("new " + mDatas.size() + 1);
                 mViewHeights.add((int)(100 + Math.random() * 300));
                 break;
             case R.id.id_action_delete:
-//                mDatas.remove(0);
-//                mAdapter.notifyItemRemoved((mRecyclerView.getHeaderViewsCount() + 1) -1);
+                if (mDatas.isEmpty()) return true;
 
                 mAdapter.notifyItemRemoved(mRecyclerView.getHeaderViewsCount() + mDatas.size() - 1);
                 mDatas.remove(mDatas.size() - 1);

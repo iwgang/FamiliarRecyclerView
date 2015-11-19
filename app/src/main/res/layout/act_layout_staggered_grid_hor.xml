@@ -18,7 +18,7 @@
         android:layout_height="match_parent"
         android:scrollbars="horizontal"
         app:frv_dividerHorizontalHeight="10dp"
-        app:frv_dividerVerticalHeight="20dp"
+        app:frv_dividerVerticalHeight="10dp"
         app:frv_footerDividersEnabled="true"
         app:frv_headerDividersEnabled="true"
         app:frv_itemViewBothSidesMargin="20dp"

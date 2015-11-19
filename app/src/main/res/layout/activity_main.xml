@@ -7,6 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <Button
@@ -30,6 +31,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <Button
@@ -53,6 +55,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <Button
@@ -72,6 +75,30 @@
             android:textAllCaps="false" />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_imitateListViewDemo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Imitate ListView Demo"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btn_imitateGridViewDemo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Imitate GridView Demo"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btn_imitateStaggeredGridViewDemo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Imitate StaggeredGridView Demo"
+        android:textAllCaps="false" />
 
 </LinearLayout>
 

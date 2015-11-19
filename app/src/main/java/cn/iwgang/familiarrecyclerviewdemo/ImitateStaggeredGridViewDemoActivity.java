@@ -1,6 +1,7 @@
 package cn.iwgang.familiarrecyclerviewdemo;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,56 +21,46 @@ import java.util.List;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerViewOnScrollListener;
 
-public class LinearLayoutActivity extends ActionBarActivity {
+public class ImitateStaggeredGridViewDemoActivity extends ActionBarActivity {
     private FamiliarRecyclerView mRecyclerView;
-    private List<String> mDatas;
-    private MyAdapter mAdapter;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private View mFooterLoadMoreView;
+    private ProgressBar mPbLoadMoreProgressBar;
+    private TextView mTvLoadMoreText;
 
+    private List<String> mDatas;
+    private List<Integer> mViewHeights;
+    private MyAdapter mAdapter;
     private boolean isVertical = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.act_layout_linear);
-
-        isVertical = getIntent().getBooleanExtra("isVertical", true);
-
-        if (isVertical) {
-            setContentView(R.layout.act_layout_linear_ver);
-        } else {
-            setContentView(R.layout.act_layout_linear_hor);
-        }
+        setContentView(R.layout.act_layout_imitate_staggeredview);
 
         mDatas = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            mDatas.add("item:" + i);
-        }
+        mViewHeights = new ArrayList<>();
+        mDatas.addAll(getDatas());
 
-        mRecyclerView = (FamiliarRecyclerView) findViewById(R.id.mRecyclerView);
+        mSwipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.mSwipeRefreshLayout);
+        mRecyclerView = (FamiliarRecyclerView)findViewById(R.id.mRecyclerView);
 
         // Item Click and Item Long Click
         mRecyclerView.setOnItemClickListener(new FamiliarRecyclerView.OnItemClickListener() {
             @Override
             public void onItemClick(FamiliarRecyclerView familiarRecyclerView, View view, int position) {
                 Log.i("wg", "onItemClick = " + familiarRecyclerView + " _ " + view + " _ " + position);
-                Toast.makeText(LinearLayoutActivity.this, "onItemClick = " + position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(ImitateStaggeredGridViewDemoActivity.this, "onItemClick = " + position, Toast.LENGTH_SHORT).show();
             }
         });
         mRecyclerView.setOnItemLongClickListener(new FamiliarRecyclerView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(FamiliarRecyclerView familiarRecyclerView, View view, int position) {
                 Log.i("wg", "onItemLongClick = " + familiarRecyclerView + " _ " + view + " _ " + position);
-                Toast.makeText(LinearLayoutActivity.this, "onItemLongClick = " + position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(ImitateStaggeredGridViewDemoActivity.this, "onItemLongClick = " + position, Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
-
-        // set LayoutManager in code
-//        if (isVertical) {
-//            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        } else {
-//            mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-//        }
 
         mRecyclerView.setOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecyclerView.getLayoutManager()) {
             @Override
@@ -79,39 +71,80 @@ public class LinearLayoutActivity extends ActionBarActivity {
             @Override
             public void onScrolledToBottom() {
                 Log.i("wg", "onScrolledToBottom ...");
+                if (mDatas.size() >= 70) {
+                    return ;
+                }
+
+                // add footer view
+                mPbLoadMoreProgressBar.setVisibility(View.VISIBLE);
+                mTvLoadMoreText.setText("正在加载数据...");
+
+                new android.os.Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDatas.addAll(getDatas());
+                        mAdapter.notifyDataSetChanged();
+
+                        mPbLoadMoreProgressBar.setVisibility(View.GONE);
+                        mTvLoadMoreText.setText("松开加载更多");
+
+                        if (mDatas.size() >= 70) {
+                            mRecyclerView.removeFooterView(mFooterLoadMoreView);
+                        }
+                    }
+                }, 1000);
             }
         });
 
+        mFooterLoadMoreView = View.inflate(this, R.layout.footer_view_load_more, null);
+        mPbLoadMoreProgressBar = (ProgressBar)mFooterLoadMoreView.findViewById(R.id.pb_progressBar);
+        mTvLoadMoreText = (TextView)mFooterLoadMoreView.findViewById(R.id.tv_text);
+
         // ItemAnimator
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-//        mRecyclerView.setHeaderDividersEnabled(true);
-//        mRecyclerView.setFooterDividersEnabled(true);
-
         // head view
         mRecyclerView.addHeaderView(HeaderAndFooterViewUtil.getHeadView(this, isVertical, 0xFFFF5000, "Head View 1"));
-//        mRecyclerView.addHeaderView(HeaderAndFooterViewUtil.getHeadView(this, isVertical, Color.BLUE, "Head View 2"));
 
-        // footer view
-        mRecyclerView.addFooterView(HeaderAndFooterViewUtil.getFooterView(this, isVertical, 0xFF778899, "Foot View 1"));
-//        mRecyclerView.addFooterView(HeaderAndFooterViewUtil.getFooterView(this, isVertical, Color.RED, "Foot View 2"));
+        mRecyclerView.addFooterView(mFooterLoadMoreView);
 
-        // empty view
-        mRecyclerView.setEmptyView(findViewById(R.id.tv_empty), true);
+        mRecyclerView.setEmptyViewRetainShowHeadOrFoot(true);
 
         mAdapter = new MyAdapter();
         mRecyclerView.setAdapter(mAdapter);
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new android.os.Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDatas.clear();
+                        mViewHeights.clear();
+                        mDatas.addAll(getDatas());
+                        mAdapter.notifyDataSetChanged();
+
+                        mRecyclerView.addFooterView(mFooterLoadMoreView);
+
+                        mPbLoadMoreProgressBar.setVisibility(View.GONE);
+                        mTvLoadMoreText.setText("松开加载更多");
+
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 1000);
+            }
+        });
     }
 
     class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            int layoutId = isVertical ? R.layout.item_view_linear : R.layout.item_view_linear_hor;
-            return new MyViewHolder(LayoutInflater.from(LinearLayoutActivity.this).inflate(layoutId, parent, false));
+            return new MyViewHolder(LayoutInflater.from(ImitateStaggeredGridViewDemoActivity.this).inflate(R.layout.item_view_staggered_grid, parent, false));
         }
 
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
+            ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
+            lp.height = mViewHeights.get(position);
             holder.mTvTxt.setText(mDatas.get(position));
         }
 
@@ -143,14 +176,28 @@ public class LinearLayoutActivity extends ActionBarActivity {
             case R.id.id_action_add:
                 mAdapter.notifyItemInserted(mRecyclerView.getHeaderViewsCount() + mDatas.size());
                 mDatas.add("new add item:" + mDatas.size());
+                mViewHeights.add((int)(300 + Math.random() * 300));
                 break;
             case R.id.id_action_delete:
                 if (mDatas.isEmpty()) return true;
 
                 mAdapter.notifyItemRemoved(mRecyclerView.getHeaderViewsCount() + mDatas.size() - 1);
                 mDatas.remove(mDatas.size() - 1);
+                mViewHeights.remove(mViewHeights.size() - 1);
                 break;
         }
         return true;
     }
+
+    private List<String> getDatas() {
+        List<String> tempDatas = new ArrayList<>();
+        int curMaxData =  mDatas.size();
+        for (int i = 0; i < 10; i++) {
+            tempDatas.add("item:" + (curMaxData + i));
+            mViewHeights.add((int)(300 + Math.random() * 300));
+        }
+
+        return tempDatas;
+    }
+
 }

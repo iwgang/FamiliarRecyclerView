@@ -58,5 +58,26 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
+
+        findViewById(R.id.btn_imitateListViewDemo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, ImitateListViewDemoActivity.class));
+            }
+        });
+
+        findViewById(R.id.btn_imitateGridViewDemo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, ImitateGridViewDemoActivity.class));
+            }
+        });
+
+        findViewById(R.id.btn_imitateStaggeredGridViewDemo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, ImitateStaggeredGridViewDemoActivity.class));
+            }
+        });
     }
 }

@@ -5,7 +5,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,7 +23,6 @@ public class GridLayoutActivity extends ActionBarActivity {
     private List<String> mDatas;
     private MyAdapter mAdapter;
 
-    private View mScrolledToBottomAddFooterView = null;
     private boolean isVertical = true;
 
     @Override
@@ -42,7 +40,7 @@ public class GridLayoutActivity extends ActionBarActivity {
 
         mDatas = new ArrayList<>();
         for (int i = 0; i < 12; i++) {
-            mDatas.add("test:" + i);
+            mDatas.add("item:" + i);
         }
 
         mRecyclerView = (FamiliarRecyclerView) findViewById(R.id.mRecyclerView);
@@ -75,23 +73,11 @@ public class GridLayoutActivity extends ActionBarActivity {
             @Override
             public void onScrolledToTop() {
                 Log.i("wg", "onScrolledToTop ...");
-
-                // remove footer view
-//                if (null != mScrolledToBottomAddFooterView) {
-//                    mRecyclerView.removeFooterView(mScrolledToBottomAddFooterView);
-//                    mScrolledToBottomAddFooterView = null;
-//                }
             }
 
             @Override
             public void onScrolledToBottom() {
                 Log.i("wg", "onScrolledToBottom ...");
-
-                // add footer view
-//                if (null == mScrolledToBottomAddFooterView) {
-//                    mScrolledToBottomAddFooterView = HeaderAndFooterViewUtil.getFooterView(GridLayoutActivity.this, isVertical, 0xFF778899, "Foot View 1");
-//                    mRecyclerView.addFooterView(mScrolledToBottomAddFooterView);
-//                }
             }
         });
 
@@ -153,15 +139,11 @@ public class GridLayoutActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.id_action_add:
-//                mDatas.add(0, "new " + mDatas.size() + 1);
-//                mAdapter.notifyItemInserted((mRecyclerView.getHeaderViewsCount() + 1) -1);
-
                 mAdapter.notifyItemInserted(mRecyclerView.getHeaderViewsCount() + mDatas.size());
-                mDatas.add("new " + mDatas.size() + 1);
+                mDatas.add("new add item:" + mDatas.size());
                 break;
             case R.id.id_action_delete:
-//                mDatas.remove(0);
-//                mAdapter.notifyItemRemoved((mRecyclerView.getHeaderViewsCount() + 1) -1);
+                if (mDatas.isEmpty()) return true;
 
                 mAdapter.notifyItemRemoved(mRecyclerView.getHeaderViewsCount() + mDatas.size() - 1);
                 mDatas.remove(mDatas.size() - 1);

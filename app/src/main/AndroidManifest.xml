@@ -21,6 +21,9 @@
         <activity android:name=".LinearLayoutActivity" />
         <activity android:name=".GridLayoutActivity" />
         <activity android:name=".StaggeredGridActivity" />
+        <activity android:name=".ImitateListViewDemoActivity" />
+        <activity android:name=".ImitateGridViewDemoActivity" />
+        <activity android:name=".ImitateStaggeredGridViewDemoActivity" />
     </application>
 
 </manifest>
