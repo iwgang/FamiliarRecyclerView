@@ -14,6 +14,19 @@ mRecylcerView.addFooterView() 和 .removeFooterView()
 mRecylcerView.setsetDivider() 如果风格视图或瀑布流视图 你甚至可以设置横竖不同的分割线及分割线大小
 // 设置数据空View（设置isRetainShowHeadOrFoot为true时，可以让显示EmptyView时不会清除掉添加的HeadView和FooterView）
 mRecylcerView.setEmptyView()
+// Item单击事件
+mRecyclerView.setOnItemClickListener(new FamiliarRecyclerView.OnItemClickListener() {
+    @Override
+    public void onItemClick(FamiliarRecyclerView familiarRecyclerView, View view, int position) {
+    }
+});
+// Item长按事件
+mRecyclerView.setOnItemLongClickListener(new FamiliarRecyclerView.OnItemLongClickListener() {
+    @Override
+    public boolean onItemLongClick(FamiliarRecyclerView familiarRecyclerView, View view, int position) {
+        return true;
+    }
+});
 // 设置滚到到顶部或底部时的事件回调
 mRecyclerView.setOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecyclerView.getLayoutManager()) {
     @Override
