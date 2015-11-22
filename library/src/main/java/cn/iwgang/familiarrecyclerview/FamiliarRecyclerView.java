@@ -53,6 +53,8 @@ public class FamiliarRecyclerView extends RecyclerView {
     private OnItemLongClickListener mTempOnItemLongClickListener;
     private int mLayoutManagerType;
 
+    private boolean hasShwEmptyView = false;
+
     public FamiliarRecyclerView(Context context) {
         this(context, null);
     }
@@ -225,11 +227,10 @@ public class FamiliarRecyclerView extends RecyclerView {
         mWrapFamiliarRecyclerViewAdapter.setOnItemClickListener(mTempOnItemClickListener);
         mWrapFamiliarRecyclerViewAdapter.setOnItemLongClickListener(mTempOnItemLongClickListener);
 
+        mReqAdapter.registerAdapterDataObserver(mEmptyAdapterDataObserver);
         super.setAdapter(mWrapFamiliarRecyclerViewAdapter);
 
-        mReqAdapter.registerAdapterDataObserver(mEmptyAdapterDataObserver);
-
-            processEmptyView(mReqAdapter.getItemCount());
+        processEmptyView(mReqAdapter.getItemCount());
     }
 
     @Override
@@ -306,10 +307,23 @@ public class FamiliarRecyclerView extends RecyclerView {
     }
 
     private void processEmptyView(int curTotalNum) {
-        if (!isRetainShowHeadOrFoot && null != mEmptyView) {
+        if (null != mEmptyView) {
             boolean isShowEmptyView = curTotalNum == 0;
-            mEmptyView.setVisibility(isShowEmptyView ? VISIBLE : GONE);
-            setVisibility(isShowEmptyView ? GONE : VISIBLE);
+
+            if (isShowEmptyView == hasShwEmptyView) return ;
+
+            if (isRetainShowHeadOrFoot) {
+                if (hasShwEmptyView && !isShowEmptyView) {
+                    hasShwEmptyView = false;
+                    mReqAdapter.notifyItemRemoved(getHeaderViewsCount());
+                } else {
+                    hasShwEmptyView = true;
+                }
+            } else {
+                mEmptyView.setVisibility(isShowEmptyView ? VISIBLE : GONE);
+                setVisibility(isShowEmptyView ? GONE : VISIBLE);
+                hasShwEmptyView = true;
+            }
         }
     }
 
