@@ -14,10 +14,9 @@ import java.util.List;
  * https://github.com/iwgang/FamiliarRecyclerView
  */
 public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implements View.OnClickListener, View.OnLongClickListener {
-    private static final int VIEW_TYPE_HEADER = 0;
-    private static final int VIEW_TYPE_FOOTER = 1;
-    private static final int VIEW_TYPE_ITEM = 2;
-    private static final int VIEW_TYPE_EMPTYVIEW = 3;
+    private static final int VIEW_TYPE_HEADER = -1;
+    private static final int VIEW_TYPE_FOOTER = -2;
+    private static final int VIEW_TYPE_EMPTY_VIEW = -3;
 
     private List<View> mHeaderView;
     private List<View> mFooterView;
@@ -81,12 +80,11 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
             int adjPosition = position - headersCount;
             adapterCount = mReqAdapter.getItemCount();
             if (adjPosition < adapterCount) {
-                mReqAdapter.getItemViewType(adjPosition);
-                return VIEW_TYPE_ITEM;
+                return mReqAdapter.getItemViewType(adjPosition);
             }
         } else if (mFamiliarRecyclerView.isRetainShowHeadOrFoot()) {
             // empty view
-            if (position == headersCount) return VIEW_TYPE_EMPTYVIEW;
+            if (position == headersCount) return VIEW_TYPE_EMPTY_VIEW;
         }
 
         // footer view
@@ -129,7 +127,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
                 }
                 return footerViewHolder;
             }
-            case VIEW_TYPE_EMPTYVIEW: {
+            case VIEW_TYPE_EMPTY_VIEW: {
                 EmptyHeaderOrFooterViewHolder emptyViewHolder;
                 View emptyView = mFamiliarRecyclerView.getEmptyView();
                 emptyView.setVisibility(View.VISIBLE);
@@ -150,8 +148,12 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
                 // create default item view
                 RecyclerView.ViewHolder itemViewHolder = mReqAdapter.onCreateViewHolder(parent, viewType);
                 // add click listener
-                itemViewHolder.itemView.setOnClickListener(this);
-                itemViewHolder.itemView.setOnLongClickListener(this);
+                if (null != mOnItemClickListener) {
+                    itemViewHolder.itemView.setOnClickListener(this);
+                }
+                if (null != mOnItemLongClickListener) {
+                    itemViewHolder.itemView.setOnLongClickListener(this);
+                }
                 return itemViewHolder;
         }
     }
@@ -159,7 +161,8 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        if (getItemViewType(position) == VIEW_TYPE_ITEM) {
+        if (getItemViewType(position) >= 0) {
+            // item view
             final int adjPosition = position - getHeadersCount();
             int adapterCount;
             if (mReqAdapter != null) {

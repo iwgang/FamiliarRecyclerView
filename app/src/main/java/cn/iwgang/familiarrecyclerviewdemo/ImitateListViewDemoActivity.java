@@ -133,14 +133,26 @@ public class ImitateListViewDemoActivity extends ActionBarActivity {
     }
 
     class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
+        private static final int VIEW_TYPE_1 = 101;
+        private static final int VIEW_TYPE_2 = 102;
+
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new MyViewHolder(LayoutInflater.from(ImitateListViewDemoActivity.this).inflate(R.layout.item_view_linear, parent, false));
+            return new MyViewHolder(LayoutInflater.from(ImitateListViewDemoActivity.this).inflate(viewType == VIEW_TYPE_1 ? R.layout.item_view_linear : R.layout.item_view_linear_type2, parent, false));
         }
 
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
-            holder.mTvTxt.setText(mDatas.get(position));
+            if (getItemViewType(position) == VIEW_TYPE_2) {
+                holder.mTvTxt.setText(String.format("View Type 2 %s", mDatas.get(position)));
+            } else {
+                holder.mTvTxt.setText(mDatas.get(position));
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return position == 3 ? VIEW_TYPE_2 : VIEW_TYPE_1;
         }
 
         @Override
@@ -186,7 +198,7 @@ public class ImitateListViewDemoActivity extends ActionBarActivity {
         List<String> tempDatas = new ArrayList<>();
         int curMaxData =  mDatas.size();
         for (int i = 0; i < 10; i++) {
-            tempDatas.add("test:" + (curMaxData + i));
+            tempDatas.add("item:" + (curMaxData + i));
         }
 
         return tempDatas;
