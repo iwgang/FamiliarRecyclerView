@@ -137,16 +137,21 @@ public class GridLayoutActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        int notifyPos;
         switch (item.getItemId()) {
             case R.id.id_action_add:
-                mAdapter.notifyItemInserted(mRecyclerView.getHeaderViewsCount() + mDatas.size());
-                mDatas.add("new add item:" + mDatas.size());
+                notifyPos = mDatas.size();
+
+                mDatas.add("new add item:" + notifyPos);
+                mAdapter.notifyItemInserted(notifyPos);
                 break;
             case R.id.id_action_delete:
                 if (mDatas.isEmpty()) return true;
 
-                mAdapter.notifyItemRemoved(mRecyclerView.getHeaderViewsCount() + mDatas.size() - 1);
-                mDatas.remove(mDatas.size() - 1);
+                notifyPos = mDatas.size() - 1;
+
+                mDatas.remove(notifyPos);
+                mAdapter.notifyItemRemoved(notifyPos);
                 break;
         }
         return true;

@@ -82,8 +82,10 @@ public class ImitateStaggeredGridViewDemoActivity extends ActionBarActivity {
                 new android.os.Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mDatas.addAll(getDatas());
-                        mAdapter.notifyDataSetChanged();
+                        int startPos = mDatas.size() - 1;
+                        List<String> newDatas = getDatas();
+                        mDatas.addAll(newDatas);
+                        mAdapter.notifyItemRangeChanged(startPos, newDatas.size());
 
                         mPbLoadMoreProgressBar.setVisibility(View.GONE);
                         mTvLoadMoreText.setText("松开加载更多");
@@ -172,18 +174,23 @@ public class ImitateStaggeredGridViewDemoActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        int notifyPos;
+
         switch (item.getItemId()) {
             case R.id.id_action_add:
-                mAdapter.notifyItemInserted(mRecyclerView.getHeaderViewsCount() + mDatas.size());
-                mDatas.add("new add item:" + mDatas.size());
-                mViewHeights.add((int)(300 + Math.random() * 300));
+                notifyPos = mDatas.size();
+
+                mDatas.add("new " + mDatas.size());
+                mViewHeights.add((int)(100 + Math.random() * 300));
+                mAdapter.notifyItemInserted(notifyPos);
                 break;
             case R.id.id_action_delete:
                 if (mDatas.isEmpty()) return true;
 
-                mAdapter.notifyItemRemoved(mRecyclerView.getHeaderViewsCount() + mDatas.size() - 1);
-                mDatas.remove(mDatas.size() - 1);
+                notifyPos = mDatas.size() - 1;
+                mDatas.remove(notifyPos);
                 mViewHeights.remove(mViewHeights.size() - 1);
+                mAdapter.notifyItemRemoved(notifyPos);
                 break;
         }
         return true;

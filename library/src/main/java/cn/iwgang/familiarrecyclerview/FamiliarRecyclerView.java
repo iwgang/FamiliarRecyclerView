@@ -210,7 +210,7 @@ public class FamiliarRecyclerView extends RecyclerView {
         if (null == adapter) {
             if (null != mReqAdapter) {
                 if (!isRetainShowHeadOrFoot) {
-                    mReqAdapter.unregisterAdapterDataObserver(mEmptyAdapterDataObserver);
+                    mReqAdapter.unregisterAdapterDataObserver(mReqAdapterDataObserver);
                 }
                 mReqAdapter = null;
                 mWrapFamiliarRecyclerViewAdapter = null;
@@ -227,7 +227,7 @@ public class FamiliarRecyclerView extends RecyclerView {
         mWrapFamiliarRecyclerViewAdapter.setOnItemClickListener(mTempOnItemClickListener);
         mWrapFamiliarRecyclerViewAdapter.setOnItemLongClickListener(mTempOnItemLongClickListener);
 
-        mReqAdapter.registerAdapterDataObserver(mEmptyAdapterDataObserver);
+        mReqAdapter.registerAdapterDataObserver(mReqAdapterDataObserver);
         super.setAdapter(mWrapFamiliarRecyclerViewAdapter);
 
         processEmptyView(mReqAdapter.getItemCount());
@@ -238,7 +238,7 @@ public class FamiliarRecyclerView extends RecyclerView {
         super.onDetachedFromWindow();
 
         if (null != mReqAdapter) {
-            mReqAdapter.unregisterAdapterDataObserver(mEmptyAdapterDataObserver);
+            mReqAdapter.unregisterAdapterDataObserver(mReqAdapterDataObserver);
         }
     }
 
@@ -588,18 +588,32 @@ public class FamiliarRecyclerView extends RecyclerView {
         boolean onItemLongClick(FamiliarRecyclerView familiarRecyclerView, View view, int position);
     }
 
-    private AdapterDataObserver mEmptyAdapterDataObserver = new AdapterDataObserver() {
+    private AdapterDataObserver mReqAdapterDataObserver = new AdapterDataObserver() {
         @Override
         public void onChanged() {
+            mWrapFamiliarRecyclerViewAdapter.notifyDataSetChanged();
             processEmptyView(null != mReqAdapter ? mReqAdapter.getItemCount() : 0);
         }
 
         public void onItemRangeInserted(int positionStart, int itemCount) {
+            mWrapFamiliarRecyclerViewAdapter.notifyItemInserted(getHeaderViewsCount() + positionStart);
             processEmptyView(null != mReqAdapter ? mReqAdapter.getItemCount() + itemCount : 0);
         }
 
         public void onItemRangeRemoved(int positionStart, int itemCount) {
+            mWrapFamiliarRecyclerViewAdapter.notifyItemRemoved(getHeaderViewsCount() + positionStart);
             processEmptyView(null != mReqAdapter ? mReqAdapter.getItemCount() - itemCount : 0);
+        }
+
+        @Override
+        public void onItemRangeChanged(int positionStart, int itemCount) {
+            mWrapFamiliarRecyclerViewAdapter.notifyItemRangeChanged(getHeaderViewsCount() + positionStart, itemCount);
+            processEmptyView(null != mReqAdapter ? mReqAdapter.getItemCount() + itemCount : 0);
+        }
+
+        @Override
+        public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
+            mWrapFamiliarRecyclerViewAdapter.notifyItemMoved(getHeaderViewsCount() + fromPosition, getHeaderViewsCount() + toPosition);
         }
     };
 

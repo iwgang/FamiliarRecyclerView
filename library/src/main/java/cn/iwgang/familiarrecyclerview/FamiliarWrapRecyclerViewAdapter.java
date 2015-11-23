@@ -174,34 +174,6 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
         }
     }
 
-    @Override
-    public void registerAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
-        if (mReqAdapter != null) {
-            mReqAdapter.registerAdapterDataObserver(observer);
-        }
-    }
-
-    @Override
-    public void unregisterAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
-        if (mReqAdapter != null) {
-            mReqAdapter.unregisterAdapterDataObserver(observer);
-        }
-    }
-
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        if (mReqAdapter != null) {
-            mReqAdapter.onAttachedToRecyclerView(recyclerView);
-        }
-    }
-
-    @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-        if (mReqAdapter != null) {
-            mReqAdapter.onDetachedFromRecyclerView(recyclerView);
-        }
-    }
-
     public void setOnItemClickListener(FamiliarRecyclerView.OnItemClickListener mOnItemClickListener) {
         this.mOnItemClickListener = mOnItemClickListener;
     }
