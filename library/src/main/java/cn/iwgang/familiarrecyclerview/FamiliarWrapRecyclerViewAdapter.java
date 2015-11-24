@@ -100,7 +100,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
                 EmptyHeaderOrFooterViewHolder headerViewHolder;
                 View tempHeadView = mHeaderView.get(curHeaderOrFooterPos);
                 if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID) {
-                    FrameLayout mContainerView = new FrameLayout(mHeaderView.get(curHeaderOrFooterPos).getContext());
+                    FrameLayout mContainerView = new FrameLayout(tempHeadView.getContext());
                     mContainerView.addView(tempHeadView);
                     headerViewHolder = new EmptyHeaderOrFooterViewHolder(mContainerView);
                     StaggeredGridLayoutManager.LayoutParams layoutParams = new StaggeredGridLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -116,14 +116,14 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
                 EmptyHeaderOrFooterViewHolder footerViewHolder;
                 View tempFooterView = mFooterView.get(curHeaderOrFooterPos);
                 if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID) {
-                    FrameLayout mContainerView = new FrameLayout(mHeaderView.get(curHeaderOrFooterPos).getContext());
+                    FrameLayout mContainerView = new FrameLayout(tempFooterView.getContext());
                     mContainerView.addView(tempFooterView);
                     footerViewHolder = new EmptyHeaderOrFooterViewHolder(mContainerView);
                     StaggeredGridLayoutManager.LayoutParams layoutParams = new StaggeredGridLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                     layoutParams.setFullSpan(true);
                     footerViewHolder.itemView.setLayoutParams(layoutParams);
                 } else {
-                    footerViewHolder = new EmptyHeaderOrFooterViewHolder(mFooterView.get(curHeaderOrFooterPos));
+                    footerViewHolder = new EmptyHeaderOrFooterViewHolder(tempFooterView);
                 }
                 return footerViewHolder;
             }
