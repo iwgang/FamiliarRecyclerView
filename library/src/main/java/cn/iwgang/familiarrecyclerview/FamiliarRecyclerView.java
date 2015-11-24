@@ -53,7 +53,7 @@ public class FamiliarRecyclerView extends RecyclerView {
     private OnItemLongClickListener mTempOnItemLongClickListener;
     private int mLayoutManagerType;
 
-    private boolean hasShwEmptyView = false;
+    private boolean hasShowEmptyView = false;
 
     public FamiliarRecyclerView(Context context) {
         this(context, null);
@@ -215,7 +215,7 @@ public class FamiliarRecyclerView extends RecyclerView {
                 mReqAdapter = null;
                 mWrapFamiliarRecyclerViewAdapter = null;
 
-                processEmptyView(0);
+                processEmptyView();
             }
 
             return;
@@ -230,7 +230,7 @@ public class FamiliarRecyclerView extends RecyclerView {
         mReqAdapter.registerAdapterDataObserver(mReqAdapterDataObserver);
         super.setAdapter(mWrapFamiliarRecyclerViewAdapter);
 
-        processEmptyView(mReqAdapter.getItemCount());
+        processEmptyView();
     }
 
     @Override
@@ -306,24 +306,22 @@ public class FamiliarRecyclerView extends RecyclerView {
         super.addItemDecoration(mFamiliarDefaultItemDecoration);
     }
 
-    private void processEmptyView(int curTotalNum) {
+    private void processEmptyView() {
         if (null != mEmptyView) {
-            boolean isShowEmptyView = curTotalNum == 0;
+            boolean isShowEmptyView = (null != mReqAdapter ? mReqAdapter.getItemCount() : 0) == 0;
 
-            if (isShowEmptyView == hasShwEmptyView) return ;
+            if (isShowEmptyView == hasShowEmptyView) return ;
 
             if (isRetainShowHeadOrFoot) {
-                if (hasShwEmptyView && !isShowEmptyView) {
-                    hasShwEmptyView = false;
-                    mReqAdapter.notifyItemRemoved(getHeaderViewsCount());
-                } else {
-                    hasShwEmptyView = true;
+                if (hasShowEmptyView) {
+                    mWrapFamiliarRecyclerViewAdapter.notifyItemRemoved(getHeaderViewsCount());
                 }
             } else {
                 mEmptyView.setVisibility(isShowEmptyView ? VISIBLE : GONE);
                 setVisibility(isShowEmptyView ? GONE : VISIBLE);
-                hasShwEmptyView = true;
             }
+
+            this.hasShowEmptyView = isShowEmptyView;
         }
     }
 
@@ -476,9 +474,9 @@ public class FamiliarRecyclerView extends RecyclerView {
         if (mHeaderView.contains(v)) return;
 
         mHeaderView.add(v);
-        if (null != mReqAdapter) {
+        if (null != mWrapFamiliarRecyclerViewAdapter) {
             int pos = mHeaderView.size() - 1;
-            mReqAdapter.notifyItemInserted(pos);
+            mWrapFamiliarRecyclerViewAdapter.notifyItemInserted(pos);
 
             if (isScrollTo) {
                 scrollToPosition(pos);
@@ -489,7 +487,9 @@ public class FamiliarRecyclerView extends RecyclerView {
     public boolean removeHeaderView(View v) {
         if (!mHeaderView.contains(v)) return false;
 
-        mReqAdapter.notifyItemRemoved(mHeaderView.indexOf(v));
+        if (null != mWrapFamiliarRecyclerViewAdapter) {
+            mWrapFamiliarRecyclerViewAdapter.notifyItemRemoved(mHeaderView.indexOf(v));
+        }
         return mHeaderView.remove(v);
     }
 
@@ -501,9 +501,9 @@ public class FamiliarRecyclerView extends RecyclerView {
         if (mFooterView.contains(v)) return;
 
         mFooterView.add(v);
-        if (null != mReqAdapter) {
-            int pos = mReqAdapter.getItemCount() + getHeaderViewsCount() + mFooterView.size() - 1;
-            mReqAdapter.notifyItemInserted(pos);
+        if (null != mWrapFamiliarRecyclerViewAdapter) {
+            int pos = (null == mReqAdapter ? 0 : mReqAdapter.getItemCount()) + getHeaderViewsCount() + mFooterView.size() - 1;
+            mWrapFamiliarRecyclerViewAdapter.notifyItemInserted(pos);
             if (isScrollTo) {
                 scrollToPosition(pos);
             }
@@ -513,7 +513,10 @@ public class FamiliarRecyclerView extends RecyclerView {
     public boolean removeFooterView(View v) {
         if (!mFooterView.contains(v)) return false;
 
-        mReqAdapter.notifyItemRemoved(mReqAdapter.getItemCount() + getHeaderViewsCount() + mFooterView.indexOf(v));
+        if (null != mWrapFamiliarRecyclerViewAdapter) {
+            int pos = (null == mReqAdapter ? 0 : mReqAdapter.getItemCount()) + getHeaderViewsCount() + mFooterView.indexOf(v);
+            mWrapFamiliarRecyclerViewAdapter.notifyItemRemoved(pos);
+        }
         return mFooterView.remove(v);
     }
 
@@ -525,21 +528,69 @@ public class FamiliarRecyclerView extends RecyclerView {
         return mFooterView.size();
     }
 
+    public int getFirstVisiblePosition() {
+        LayoutManager layoutManager = getLayoutManager();
+
+        if (null == layoutManager) return 0;
+
+        int ret = -1;
+
+        switch (mLayoutManagerType) {
+            case LAYOUT_MANAGER_TYPE_LINEAR:
+                ret = ((LinearLayoutManager) layoutManager).findFirstCompletelyVisibleItemPosition() - getHeaderViewsCount();
+                break;
+            case LAYOUT_MANAGER_TYPE_GRID:
+                ret = ((GridLayoutManager) layoutManager).findFirstCompletelyVisibleItemPosition() - getHeaderViewsCount();
+                break;
+            case LAYOUT_MANAGER_TYPE_STAGGERED_GRID:
+                StaggeredGridLayoutManager tempStaggeredGridLayoutManager = (StaggeredGridLayoutManager)layoutManager;
+                int[] firstVisibleItemPositions = new int[tempStaggeredGridLayoutManager.getSpanCount()];
+                tempStaggeredGridLayoutManager.findFirstCompletelyVisibleItemPositions(firstVisibleItemPositions);
+                ret = firstVisibleItemPositions[0] - getHeaderViewsCount();
+                break;
+        }
+
+        return ret < 0 ? 0 : ret;
+    }
+
     public int getLastVisiblePosition() {
         LayoutManager layoutManager = getLayoutManager();
         if (null == layoutManager) return -1;
 
+        int curItemCount = (null != mReqAdapter ? mReqAdapter.getItemCount() - 1 : 0);
+        int ret = -1;
+
         switch (mLayoutManagerType) {
             case LAYOUT_MANAGER_TYPE_LINEAR:
-                return ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+                ret = ((LinearLayoutManager)layoutManager).findLastCompletelyVisibleItemPosition() - getHeaderViewsCount();
+                if (ret > curItemCount) {
+                    ret -= getFooterViewsCount();
+                }
+                break;
             case LAYOUT_MANAGER_TYPE_GRID:
-                return ((GridLayoutManager) layoutManager).findFirstVisibleItemPosition();
+                ret = ((GridLayoutManager)layoutManager).findLastCompletelyVisibleItemPosition() - getHeaderViewsCount();
+                if (ret > curItemCount) {
+                    ret -= getFooterViewsCount();
+                }
+                break;
             case LAYOUT_MANAGER_TYPE_STAGGERED_GRID:
-                int[] firstVisibleItemPositions = ((StaggeredGridLayoutManager) layoutManager).findFirstVisibleItemPositions(null);
-                return firstVisibleItemPositions.length > 0 ? firstVisibleItemPositions[0] : -1;
+                StaggeredGridLayoutManager tempStaggeredGridLayoutManager = (StaggeredGridLayoutManager)layoutManager;
+                int[] lastVisibleItemPositions = new int[tempStaggeredGridLayoutManager.getSpanCount()];
+                tempStaggeredGridLayoutManager.findLastCompletelyVisibleItemPositions(lastVisibleItemPositions);
+                if (lastVisibleItemPositions.length > 0) {
+                    int maxPos = lastVisibleItemPositions[0];
+                    for (int curPos : lastVisibleItemPositions) {
+                        if (curPos > maxPos) maxPos = curPos;
+                    }
+                    ret = maxPos - getHeaderViewsCount();
+                    if (ret > curItemCount) {
+                        ret -= getFooterViewsCount();
+                    }
+                }
+                break;
         }
 
-        return -1;
+        return ret < 0 ? (null != mReqAdapter ? mReqAdapter.getItemCount() - 1 : 0) : ret;
     }
 
     public void setHeaderDividersEnabled(boolean isHeaderDividersEnabled) {
@@ -592,23 +643,23 @@ public class FamiliarRecyclerView extends RecyclerView {
         @Override
         public void onChanged() {
             mWrapFamiliarRecyclerViewAdapter.notifyDataSetChanged();
-            processEmptyView(null != mReqAdapter ? mReqAdapter.getItemCount() : 0);
+            processEmptyView();
         }
 
         public void onItemRangeInserted(int positionStart, int itemCount) {
             mWrapFamiliarRecyclerViewAdapter.notifyItemInserted(getHeaderViewsCount() + positionStart);
-            processEmptyView(null != mReqAdapter ? mReqAdapter.getItemCount() + itemCount : 0);
+            processEmptyView();
         }
 
         public void onItemRangeRemoved(int positionStart, int itemCount) {
             mWrapFamiliarRecyclerViewAdapter.notifyItemRemoved(getHeaderViewsCount() + positionStart);
-            processEmptyView(null != mReqAdapter ? mReqAdapter.getItemCount() - itemCount : 0);
+            processEmptyView();
         }
 
         @Override
         public void onItemRangeChanged(int positionStart, int itemCount) {
             mWrapFamiliarRecyclerViewAdapter.notifyItemRangeChanged(getHeaderViewsCount() + positionStart, itemCount);
-            processEmptyView(null != mReqAdapter ? mReqAdapter.getItemCount() + itemCount : 0);
+            processEmptyView();
         }
 
         @Override
