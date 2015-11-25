@@ -1,3 +1,6 @@
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-FamiliarRecyclerView-green.svg?style=true)](https://android-arsenal.com/details/1/2829)
+[![@iwgang](https://img.shields.io/badge/weibo-%40iwgang-blue.svg)](http://weibo.com/iwgang)
+
 # FamiliarRecyclerView
 这是一个如你熟悉ListView、GridView一样熟悉的RecyclerView类库，你可以用以前使用ListView / GridView的习惯来使用RecyclerView，这些可让你将项目原有的ListView / GridView / 瀑布流 迁移到RecyclerView时减少许多工作量.
 

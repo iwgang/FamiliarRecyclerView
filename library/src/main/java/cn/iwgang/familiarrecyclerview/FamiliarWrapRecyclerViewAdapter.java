@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.FrameLayout;
 
 import java.util.List;
@@ -114,7 +115,20 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
             case VIEW_TYPE_FOOTER: {
                 // create footer view
                 EmptyHeaderOrFooterViewHolder footerViewHolder;
-                View tempFooterView = mFooterView.get(curHeaderOrFooterPos);
+                View tempFooterView;
+
+                // fix fast delete IndexOutOfBoundsException
+                int footerViewCount = mFooterView.size();
+                if (curHeaderOrFooterPos >= footerViewCount) {
+                    curHeaderOrFooterPos = footerViewCount - 1;
+                    tempFooterView = mFooterView.get(curHeaderOrFooterPos);
+                    ViewParent tempFooterViewParent = tempFooterView.getParent();
+                    if (null != tempFooterViewParent) {
+                        ((ViewGroup)tempFooterViewParent).removeView(tempFooterView);
+                    }
+                } else {
+                    tempFooterView = mFooterView.get(curHeaderOrFooterPos);
+                }
                 if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID) {
                     FrameLayout mContainerView = new FrameLayout(tempFooterView.getContext());
                     mContainerView.addView(tempFooterView);

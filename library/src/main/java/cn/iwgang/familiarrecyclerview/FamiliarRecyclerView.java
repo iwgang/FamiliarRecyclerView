@@ -142,36 +142,38 @@ public class FamiliarRecyclerView extends RecyclerView {
                 }
             }
         } else {
-            int dividerIntrinsicHeight = null != divider && divider.getIntrinsicHeight() > 0 ? divider.getIntrinsicHeight() : -1;
-
             if (isLinearLayoutManager) {
                 if (layoutManagerOrientation == OrientationHelper.VERTICAL && mHorizontalDividerHeight <= 0) {
-                    if (null != mHorizontalDivider && mHorizontalDivider.getIntrinsicHeight() > 0) {
-                        mHorizontalDividerHeight = mHorizontalDivider.getIntrinsicHeight();
-                    } else {
-                        mHorizontalDividerHeight = dividerIntrinsicHeight > 0 ? dividerIntrinsicHeight : DEF_DIVIDER_HEIGHT;
+                    if (null != mHorizontalDivider) {
+                        if (mHorizontalDivider.getIntrinsicHeight() > 0) {
+                            mHorizontalDividerHeight = mHorizontalDivider.getIntrinsicHeight();
+                        } else {
+                            mHorizontalDividerHeight = DEF_DIVIDER_HEIGHT;
+                        }
                     }
                 } else if(layoutManagerOrientation == OrientationHelper.HORIZONTAL && mVerticalDividerHeight <= 0) {
-                    if (null != mVerticalDivider && mVerticalDivider.getIntrinsicHeight() > 0) {
-                        mVerticalDividerHeight = mVerticalDivider.getIntrinsicHeight();
-                    } else {
-                        mVerticalDividerHeight = dividerIntrinsicHeight > 0 ? dividerIntrinsicHeight : DEF_DIVIDER_HEIGHT;
+                    if (null != mVerticalDivider) {
+                        if (mVerticalDivider.getIntrinsicHeight() > 0) {
+                            mVerticalDividerHeight = mVerticalDivider.getIntrinsicHeight();
+                        } else {
+                            mVerticalDividerHeight = DEF_DIVIDER_HEIGHT;
+                        }
                     }
                 }
             } else {
-                if (mVerticalDividerHeight <= 0) {
-                    if (null != mVerticalDivider && mVerticalDivider.getIntrinsicHeight() > 0) {
+                if (mVerticalDividerHeight <= 0 && null != mVerticalDivider) {
+                    if (mVerticalDivider.getIntrinsicHeight() > 0) {
                         mVerticalDividerHeight = mVerticalDivider.getIntrinsicHeight();
                     } else {
-                        mVerticalDividerHeight = dividerIntrinsicHeight > 0 ? dividerIntrinsicHeight : DEF_DIVIDER_HEIGHT;
+                        mVerticalDividerHeight = DEF_DIVIDER_HEIGHT;
                     }
                 }
 
-                if (mHorizontalDividerHeight <= 0) {
-                    if (null != mHorizontalDivider && mHorizontalDivider.getIntrinsicHeight() > 0) {
+                if (mHorizontalDividerHeight <= 0 && null != mHorizontalDivider) {
+                    if (mHorizontalDivider.getIntrinsicHeight() > 0) {
                         mHorizontalDividerHeight = mHorizontalDivider.getIntrinsicHeight();
                     } else {
-                        mHorizontalDividerHeight = dividerIntrinsicHeight > 0 ? dividerIntrinsicHeight : DEF_DIVIDER_HEIGHT;
+                        mHorizontalDividerHeight = DEF_DIVIDER_HEIGHT;
                     }
                 }
             }
