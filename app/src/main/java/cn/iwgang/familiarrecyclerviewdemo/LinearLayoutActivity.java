@@ -1,7 +1,7 @@
 package cn.iwgang.familiarrecyclerviewdemo;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,7 +19,7 @@ import java.util.List;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerViewOnScrollListener;
 
-public class LinearLayoutActivity extends ActionBarActivity {
+public class LinearLayoutActivity extends AppCompatActivity {
     private FamiliarRecyclerView mRecyclerView;
     private List<String> mDatas;
     private MyAdapter mAdapter;
@@ -70,7 +70,7 @@ public class LinearLayoutActivity extends ActionBarActivity {
 //            mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 //        }
 
-        mRecyclerView.setOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecyclerView.getLayoutManager()) {
+        mRecyclerView.addOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecyclerView.getLayoutManager()) {
             @Override
             public void onScrolledToTop() {
 //                Log.i("wg", "onScrolledToTop ...");

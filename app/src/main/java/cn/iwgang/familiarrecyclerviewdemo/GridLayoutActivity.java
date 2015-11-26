@@ -1,8 +1,7 @@
 package cn.iwgang.familiarrecyclerviewdemo;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
@@ -17,8 +16,9 @@ import java.util.List;
 
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerViewOnScrollListener;
+import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
-public class GridLayoutActivity extends ActionBarActivity {
+public class GridLayoutActivity extends AppCompatActivity {
     private FamiliarRecyclerView mRecyclerView;
     private List<String> mDatas;
     private MyAdapter mAdapter;
@@ -69,7 +69,7 @@ public class GridLayoutActivity extends ActionBarActivity {
 //            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 4, GridLayoutManager.HORIZONTAL, false));
 //        }
 
-        mRecyclerView.setOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecyclerView.getLayoutManager()) {
+        mRecyclerView.addOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecyclerView.getLayoutManager()) {
             @Override
             public void onScrolledToTop() {
                 Log.i("wg", "onScrolledToTop ...");
@@ -82,7 +82,8 @@ public class GridLayoutActivity extends ActionBarActivity {
         });
 
         // ItemAnimator
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setItemAnimator(new LandingAnimator());
+        mRecyclerView.setHasFixedSize(true);
 
 //        mRecyclerView.setHeaderDividersEnabled(true);
 //        mRecyclerView.setFooterDividersEnabled(true);

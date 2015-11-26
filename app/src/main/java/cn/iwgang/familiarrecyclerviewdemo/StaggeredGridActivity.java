@@ -1,7 +1,7 @@
 package cn.iwgang.familiarrecyclerviewdemo;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,8 +18,9 @@ import java.util.List;
 
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerViewOnScrollListener;
+import jp.wasabeef.recyclerview.animators.ScaleInAnimator;
 
-public class StaggeredGridActivity extends ActionBarActivity {
+public class StaggeredGridActivity extends AppCompatActivity {
     private FamiliarRecyclerView mRecyclerView;
     private List<String> mDatas;
     private List<Integer> mViewHeights;
@@ -73,7 +74,7 @@ public class StaggeredGridActivity extends ActionBarActivity {
 //            mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.HORIZONTAL));
 //        }
 
-        mRecyclerView.setOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecyclerView.getLayoutManager()) {
+        mRecyclerView.addOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecyclerView.getLayoutManager()) {
             @Override
             public void onScrolledToTop() {
                 Log.i("wg", "onScrolledToTop ...");

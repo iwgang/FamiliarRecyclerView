@@ -3,6 +3,7 @@ package cn.iwgang.familiarrecyclerviewdemo;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,8 +21,9 @@ import java.util.List;
 
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerViewOnScrollListener;
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
-public class ImitateGridViewDemoActivity extends ActionBarActivity {
+public class ImitateGridViewDemoActivity extends AppCompatActivity {
     private FamiliarRecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private View mFooterLoadMoreView;
@@ -60,7 +62,7 @@ public class ImitateGridViewDemoActivity extends ActionBarActivity {
             }
         });
 
-        mRecyclerView.setOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecyclerView.getLayoutManager()) {
+        mRecyclerView.addOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecyclerView.getLayoutManager()) {
             @Override
             public void onScrolledToTop() {
                 Log.i("wg", "onScrolledToTop ...");

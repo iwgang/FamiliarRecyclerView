@@ -7,22 +7,31 @@
 ### 效果图
 ![](https://raw.githubusercontent.com/iwgang/FamiliarRecyclerView/master/screenshot/screenshot.gif)  
 
-### 你可以
+### gradle
+    compile 'com.github.iwgang:familiarrecyclerview:1.0'
+
+### 这些是不是很熟悉？
 ```
 // 添加/删除头部View (支持多个)
 mRecyclerView.addHeaderView() 和 .removeHeaderView()
+
 // 添加/删除底部View (支持多个)
 mRecyclerView.addFooterView() 和 .removeFooterView()
+
 // 设置分割线（也可以在布局文件中直接指定分割线Divider及分割线大小，当然你也可以使用自己的分割线实现）
 mRecyclerView.setDivider() 如果是网格或瀑布流视图，你甚至可以设置横竖不同的分割线Divider及分割线大小
+
 // 设置数据空View（设置isRetainShowHeadOrFoot为true时，可以让显示EmptyView时不会清除掉添加的HeadView和FooterView）
 mRecyclerView.setEmptyView()
+
 // Item单击事件
 mRecyclerView.setOnItemClickListener(new FamiliarRecyclerView.OnItemClickListener() {
     @Override
     public void onItemClick(FamiliarRecyclerView familiarRecyclerView, View view, int position) {
+        // ...
     }
 });
+
 // Item长按事件
 mRecyclerView.setOnItemLongClickListener(new FamiliarRecyclerView.OnItemLongClickListener() {
     @Override
@@ -30,6 +39,7 @@ mRecyclerView.setOnItemLongClickListener(new FamiliarRecyclerView.OnItemLongClic
         return true;
     }
 });
+
 // 设置滚到到顶部或底部时的事件回调
 mRecyclerView.setOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecyclerView.getLayoutManager()) {
     @Override
@@ -107,5 +117,4 @@ frv_spanCount               | integer                        | 2         | 格�
 frv_headerDividersEnabled   | boolean                        | false     | 是否启用headView中的分割线
 frv_footerDividersEnabled   | boolean                        | false     | 是否启用footerView中的分割线
 
-### 已知待修复Bug
-1. 动画删除格子布局的item时，如果dividerHeight设的比较大，View会有出现大小变大后再动画移除的情况
+
