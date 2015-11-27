@@ -8,6 +8,7 @@
         android:id="@+id/tv_empty"
         android:layout_width="match_parent"
         android:layout_height="300dp"
+        android:background="#EEAADD"
         android:gravity="center"
         android:text="no data"
         android:visibility="gone" />
@@ -25,6 +26,7 @@
             app:frv_divider="#333333"
             app:frv_dividerHeight="0.5dp"
             app:frv_emptyView="@id/tv_empty"
+            app:frv_isEmptyViewKeepShowHeadOrFooter="true"
             app:frv_layoutManager="linear"
             app:frv_layoutManagerOrientation="vertical" />
 

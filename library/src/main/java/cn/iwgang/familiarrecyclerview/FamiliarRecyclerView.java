@@ -46,7 +46,7 @@ public class FamiliarRecyclerView extends RecyclerView {
     private boolean isHeaderDividersEnabled = false;
     private boolean isFooterDividersEnabled = false;
     private boolean isDefaultItemDecoration = true;
-    private boolean isRetainShowHeadOrFoot = false;
+    private boolean isKeepShowHeadOrFooter = false;
     private int mEmptyViewResId;
     private View mEmptyView;
     private OnItemClickListener mTempOnItemClickListener;
@@ -78,6 +78,7 @@ public class FamiliarRecyclerView extends RecyclerView {
         mHorizontalDividerHeight = (int)ta.getDimension(R.styleable.FamiliarRecyclerView_frv_dividerHorizontalHeight, -1);
         mItemViewBothSidesMargin = (int)ta.getDimension(R.styleable.FamiliarRecyclerView_frv_itemViewBothSidesMargin, 0);
         mEmptyViewResId = ta.getResourceId(R.styleable.FamiliarRecyclerView_frv_emptyView, -1);
+        isKeepShowHeadOrFooter = ta.getBoolean(R.styleable.FamiliarRecyclerView_frv_isEmptyViewKeepShowHeadOrFooter, false);
         isHeaderDividersEnabled = ta.getBoolean(R.styleable.FamiliarRecyclerView_frv_headerDividersEnabled, false);
         isFooterDividersEnabled = ta.getBoolean(R.styleable.FamiliarRecyclerView_frv_footerDividersEnabled, false);
         if (ta.hasValue(R.styleable.FamiliarRecyclerView_frv_layoutManager)) {
@@ -191,7 +192,7 @@ public class FamiliarRecyclerView extends RecyclerView {
                 if (null != tempEmptyView1) {
                     mEmptyView = tempEmptyView1;
 
-                    if (isRetainShowHeadOrFoot) parentView.removeView(tempEmptyView1);
+                    if (isKeepShowHeadOrFooter) parentView.removeView(tempEmptyView1);
                 } else {
                     ViewParent pParentView = parentView.getParent();
                     if (null != pParentView && pParentView instanceof ViewGroup) {
@@ -199,19 +200,19 @@ public class FamiliarRecyclerView extends RecyclerView {
                         if (null != tempEmptyView2) {
                             mEmptyView = tempEmptyView2;
 
-                            if (isRetainShowHeadOrFoot) ((ViewGroup) pParentView).removeView(tempEmptyView2);
+                            if (isKeepShowHeadOrFooter) ((ViewGroup) pParentView).removeView(tempEmptyView2);
                         }
                     }
                 }
             }
             mEmptyViewResId = -1;
-        } else if (isRetainShowHeadOrFoot && null != mEmptyView) {
+        } else if (isKeepShowHeadOrFooter && null != mEmptyView) {
             ((ViewGroup)mEmptyView.getParent()).removeView(mEmptyView);
         }
 
         if (null == adapter) {
             if (null != mReqAdapter) {
-                if (!isRetainShowHeadOrFoot) {
+                if (!isKeepShowHeadOrFooter) {
                     mReqAdapter.unregisterAdapterDataObserver(mReqAdapterDataObserver);
                 }
                 mReqAdapter = null;
@@ -314,7 +315,7 @@ public class FamiliarRecyclerView extends RecyclerView {
 
             if (isShowEmptyView == hasShowEmptyView) return ;
 
-            if (isRetainShowHeadOrFoot) {
+            if (isKeepShowHeadOrFooter) {
                 if (hasShowEmptyView) {
                     mWrapFamiliarRecyclerViewAdapter.notifyItemRemoved(getHeaderViewsCount());
                 }
@@ -327,25 +328,38 @@ public class FamiliarRecyclerView extends RecyclerView {
         }
     }
 
+    /**
+     * Set EmptyView (before setAdapter)
+     * @param emptyView your EmptyView
+     */
     public void setEmptyView(View emptyView) {
         setEmptyView(emptyView, false);
     }
 
-    public void setEmptyView(View emptyView, boolean isRetainShowHeadOrFoot) {
+    /**
+     * Set EmptyView (before setAdapter)
+     * @param emptyView your EmptyView
+     * @param isKeepShowHeadOrFooter is Keep show HeadView or FooterView
+     */
+    public void setEmptyView(View emptyView, boolean isKeepShowHeadOrFooter) {
         this.mEmptyView = emptyView;
-        this.isRetainShowHeadOrFoot = isRetainShowHeadOrFoot;
-    }
-
-    public void setEmptyViewRetainShowHeadOrFoot(boolean isRetainShowHeadOrFoot) {
-        this.isRetainShowHeadOrFoot = isRetainShowHeadOrFoot;
+        this.isKeepShowHeadOrFooter = isKeepShowHeadOrFooter;
     }
 
     public View getEmptyView() {
         return mEmptyView;
     }
 
-    public boolean isRetainShowHeadOrFoot() {
-        return isRetainShowHeadOrFoot;
+    public void setEmptyViewKeepShowHeadOrFooter(boolean isKeepShowHeadOrFoot) {
+        this.isKeepShowHeadOrFooter = isKeepShowHeadOrFoot;
+    }
+
+    public boolean isShowEmptyView() {
+        return hasShowEmptyView;
+    }
+
+    public boolean isKeepShowHeadOrFooter() {
+        return isKeepShowHeadOrFooter;
     }
 
     public void setDivider(Drawable divider) {

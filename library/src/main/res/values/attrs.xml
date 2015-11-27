@@ -10,6 +10,7 @@
         <attr name="frv_dividerHorizontalHeight" format="dimension" />
         <attr name="frv_itemViewBothSidesMargin" format="dimension" />
         <attr name="frv_emptyView" format="reference" />
+        <attr name="frv_isEmptyViewKeepShowHeadOrFooter" format="boolean" />
         <attr name="frv_layoutManager" format="enum">
             <enum name="linear" value="0" />
             <enum name="grid" value="1" />

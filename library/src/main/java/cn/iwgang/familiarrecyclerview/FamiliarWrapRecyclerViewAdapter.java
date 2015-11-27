@@ -15,6 +15,8 @@ import java.util.List;
  * https://github.com/iwgang/FamiliarRecyclerView
  */
 public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implements View.OnClickListener, View.OnLongClickListener {
+    private static final int MIN_INTERVAL_CLICK_TIME = 100;
+
     private static final int VIEW_TYPE_HEADER = -1;
     private static final int VIEW_TYPE_FOOTER = -2;
     private static final int VIEW_TYPE_EMPTY_VIEW = -3;
@@ -27,6 +29,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
     private FamiliarRecyclerView.OnItemClickListener mOnItemClickListener;
     private FamiliarRecyclerView.OnItemLongClickListener mOnItemLongClickListener;
     private FamiliarRecyclerView mFamiliarRecyclerView;
+    private long mLastClickTime;
 
     public FamiliarWrapRecyclerViewAdapter(FamiliarRecyclerView familiarRecyclerView, RecyclerView.Adapter reqAdapter, List<View> mHeaderView, List<View> mFooterView, int layoutManagerType) {
         this.mFamiliarRecyclerView = familiarRecyclerView;
@@ -48,7 +51,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
     public int getItemCount() {
         int count = 0;
         int tempItemCount = mReqAdapter.getItemCount();
-        if (mFamiliarRecyclerView.isRetainShowHeadOrFoot()) {
+        if (mFamiliarRecyclerView.isKeepShowHeadOrFooter()) {
             count += tempItemCount == 0 ? 1 : tempItemCount;
         } else {
             count += tempItemCount;
@@ -83,7 +86,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
             if (adjPosition < adapterCount) {
                 return mReqAdapter.getItemViewType(adjPosition);
             }
-        } else if (mFamiliarRecyclerView.isRetainShowHeadOrFoot()) {
+        } else if (mFamiliarRecyclerView.isKeepShowHeadOrFooter()) {
             // empty view
             if (position == headersCount) return VIEW_TYPE_EMPTY_VIEW;
         }
@@ -198,14 +201,18 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
 
     @Override
     public void onClick(View v) {
-        if (null != mOnItemClickListener) {
+        long curTime = System.currentTimeMillis();
+        if (null != mOnItemClickListener && curTime - mLastClickTime > MIN_INTERVAL_CLICK_TIME) {
+            mLastClickTime = curTime;
             mOnItemClickListener.onItemClick(mFamiliarRecyclerView, v, mFamiliarRecyclerView.getChildAdapterPosition(v) - mFamiliarRecyclerView.getHeaderViewsCount());
         }
     }
 
     @Override
     public boolean onLongClick(View v) {
-        if (null != mOnItemClickListener) {
+        long curTime = System.currentTimeMillis();
+        if (null != mOnItemClickListener && curTime - mLastClickTime > MIN_INTERVAL_CLICK_TIME) {
+            mLastClickTime = curTime;
             return mOnItemLongClickListener.onItemLongClick(mFamiliarRecyclerView, v, mFamiliarRecyclerView.getChildAdapterPosition(v) - mFamiliarRecyclerView.getHeaderViewsCount());
         }
         return false;

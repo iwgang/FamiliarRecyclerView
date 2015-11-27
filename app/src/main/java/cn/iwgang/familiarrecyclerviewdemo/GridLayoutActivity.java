@@ -58,7 +58,7 @@ public class GridLayoutActivity extends AppCompatActivity {
             public boolean onItemLongClick(FamiliarRecyclerView familiarRecyclerView, View view, int position) {
                 Log.i("wg", "onItemLongClick = " + familiarRecyclerView + " _ " + view + " _ " + position);
                 Toast.makeText(GridLayoutActivity.this, "onItemLongClick = " + position, Toast.LENGTH_SHORT).show();
-                return false;
+                return true;
             }
         });
 

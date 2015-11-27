@@ -2,7 +2,6 @@ package cn.iwgang.familiarrecyclerviewdemo;
 
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
@@ -21,7 +20,6 @@ import java.util.List;
 
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerViewOnScrollListener;
-import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 public class ImitateGridViewDemoActivity extends AppCompatActivity {
     private FamiliarRecyclerView mRecyclerView;
@@ -58,7 +56,7 @@ public class ImitateGridViewDemoActivity extends AppCompatActivity {
             public boolean onItemLongClick(FamiliarRecyclerView familiarRecyclerView, View view, int position) {
                 Log.i("wg", "onItemLongClick = " + familiarRecyclerView + " _ " + view + " _ " + position);
                 Toast.makeText(ImitateGridViewDemoActivity.this, "onItemLongClick = " + position, Toast.LENGTH_SHORT).show();
-                return false;
+                return true;
             }
         });
 
@@ -108,8 +106,6 @@ public class ImitateGridViewDemoActivity extends AppCompatActivity {
         mRecyclerView.addHeaderView(HeaderAndFooterViewUtil.getHeadView(this, isVertical, 0xFFFF5000, "Head View 1"));
 
         mRecyclerView.addFooterView(mFooterLoadMoreView);
-
-        mRecyclerView.setEmptyViewRetainShowHeadOrFoot(true);
 
         mAdapter = new MyAdapter();
         mRecyclerView.setAdapter(mAdapter);

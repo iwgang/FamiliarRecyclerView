@@ -55,7 +55,7 @@ public class ImitateListViewDemoActivity extends AppCompatActivity {
             public boolean onItemLongClick(FamiliarRecyclerView familiarRecyclerView, View view, int position) {
                 Log.i("wg", "onItemLongClick = " + familiarRecyclerView + " _ " + view + " _ " + position);
                 Toast.makeText(ImitateListViewDemoActivity.this, "onItemLongClick = " + position, Toast.LENGTH_SHORT).show();
-                return false;
+                return true;
             }
         });
 
@@ -106,8 +106,6 @@ public class ImitateListViewDemoActivity extends AppCompatActivity {
         mRecyclerView.addHeaderView(HeaderAndFooterViewUtil.getHeadView(this, true, 0xFFFF5000, "Head View 1"));
 
         mRecyclerView.addFooterView(mFooterLoadMoreView);
-
-        mRecyclerView.setEmptyViewRetainShowHeadOrFoot(true);
 
         mAdapter = new MyAdapter();
         mRecyclerView.setAdapter(mAdapter);

@@ -8,7 +8,7 @@
 ![](https://raw.githubusercontent.com/iwgang/FamiliarRecyclerView/master/screenshot/screenshot.gif)  
 
 ### gradle
-    compile 'com.github.iwgang:familiarrecyclerview:1.0'
+    compile 'com.github.iwgang:familiarrecyclerview:1.2'
 
 ### 这些是不是很熟悉？
 ```
@@ -111,6 +111,7 @@ frv_dividerVerticalHeight   | dimension                      | 1px       | 垂�
 frv_dividerHorizontalHeight | dimension                      | 1px       | 水平分割线size
 frv_itemViewBothSidesMargin | dimension                      | 无        | itemView两边的边距（不会设置headerView和footerView的两边）
 frv_emptyView               | reference                      | 无        | emptyView id
+frv_isEmptyViewKeepShowHeadOrFooter | boolean                | false     | 显示EmptyView时，是否保留显示已设置的HeadView和FooterView
 frv_layoutManager           | linear / grid / staggeredGrid  | 无        | 布局类型
 frv_layoutManagerOrientation| horizontal / vertical          | vertical  | 布局方向
 frv_spanCount               | integer                        | 2         | 格子数量，frv_layoutManager=grid / staggeredGrid时有效
