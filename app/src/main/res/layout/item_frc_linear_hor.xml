@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <cn.iwgang.familiarrecyclerview.FamiliarRecyclerView
+        android:id="@+id/mHorRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        app:frv_divider="#000000"
+        app:frv_dividerHeight="0.5dp"
+        app:frv_footerDividersEnabled="true"
+        app:frv_headerDividersEnabled="true"
+        app:frv_layoutManager="linear"
+        app:frv_layoutManagerOrientation="horizontal" />
+
+</FrameLayout>

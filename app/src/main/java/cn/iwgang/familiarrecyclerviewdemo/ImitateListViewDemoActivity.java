@@ -30,6 +30,7 @@ public class ImitateListViewDemoActivity extends AppCompatActivity {
 
     private List<String> mDatas;
     private MyAdapter mAdapter;
+    private boolean isLoadingMore = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,11 +69,13 @@ public class ImitateListViewDemoActivity extends AppCompatActivity {
             @Override
             public void onScrolledToBottom() {
                 Log.i("wg", "onScrolledToBottom ...");
-                if (mDatas.size() >= 50) {
+                if (isLoadingMore || mDatas.size() >= 80) {
                     return ;
                 }
 
-                // add footer view
+                isLoadingMore = true;
+
+                // set footer view
                 mPbLoadMoreProgressBar.setVisibility(View.VISIBLE);
                 mTvLoadMoreText.setText("正在加载数据...");
 
@@ -87,9 +90,11 @@ public class ImitateListViewDemoActivity extends AppCompatActivity {
                         mPbLoadMoreProgressBar.setVisibility(View.GONE);
                         mTvLoadMoreText.setText("松开加载更多");
 
-                        if (mDatas.size() >= 50) {
+                        if (mDatas.size() >= 80) {
                             mRecyclerView.removeFooterView(mFooterLoadMoreView);
                         }
+
+                        isLoadingMore = false;
                     }
                 }, 1000);
             }
@@ -103,9 +108,39 @@ public class ImitateListViewDemoActivity extends AppCompatActivity {
         // ItemAnimator
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         // head view
+//        List<String> headDatas = new ArrayList<>();
+//        headDatas.addAll(getDatas());
+//        final MyAdapter2 headAdapter = new MyAdapter2(headDatas, 2);
+//        View headView = View.inflate(this, R.layout.head_frc_grid_hor, null);
+//        final FamiliarRecyclerView mHeadFamiliarRecyclerView = (FamiliarRecyclerView)headView.findViewById(R.id.mHorRecyclerView);
+//        mHeadFamiliarRecyclerView.setOnItemClickListener(new FamiliarRecyclerView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(FamiliarRecyclerView familiarRecyclerView, View view, int position) {
+//                headAdapter.getData().remove(position);
+//                headAdapter.notifyItemRemoved(position);
+//            }
+//        });
+//        mHeadFamiliarRecyclerView.setAdapter(headAdapter);
+//        mRecyclerView.addHeaderView(headView);
+//        mRecyclerView.setOnHeadViewBindViewHolderListener(new FamiliarRecyclerView.OnHeadViewBindViewHolderListener() {
+//            @Override
+//            public void onHeadViewBindViewHolder(RecyclerView.ViewHolder holder, int position, boolean isInitializeInvoke) {
+//                Log.i("wg", "onHeadViewBindViewHolder = " + isInitializeInvoke + " _ pos = " + position);
+//                if (position == 1 && !isInitializeInvoke) {
+//                    mHeadFamiliarRecyclerView.reRegisterAdapterDataObserver();
+//                }
+//            }
+//        });
         mRecyclerView.addHeaderView(HeaderAndFooterViewUtil.getHeadView(this, true, 0xFFFF5000, "Head View 1"));
 
         mRecyclerView.addFooterView(mFooterLoadMoreView);
+
+//        mRecyclerView.setOnFooterViewBindViewHolderListener(new FamiliarRecyclerView.OnFooterViewBindViewHolderListener() {
+//            @Override
+//            public void onFooterViewBindViewHolder(RecyclerView.ViewHolder holder, int position, boolean isInitializeInvoke) {
+//                Log.i("wg", "onFooterViewBindViewHolder = " + isInitializeInvoke + " _ pos = " + position);
+//            }
+//        });
 
         mAdapter = new MyAdapter();
         mRecyclerView.setAdapter(mAdapter);
@@ -135,16 +170,32 @@ public class ImitateListViewDemoActivity extends AppCompatActivity {
     class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
         private static final int VIEW_TYPE_1 = 101;
         private static final int VIEW_TYPE_2 = 102;
+        private MyAdapter2 myAdapter2;
 
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new MyViewHolder(LayoutInflater.from(ImitateListViewDemoActivity.this).inflate(viewType == VIEW_TYPE_1 ? R.layout.item_view_linear : R.layout.item_view_linear_type2, parent, false));
+            return new MyViewHolder(LayoutInflater.from(ImitateListViewDemoActivity.this).inflate(viewType == VIEW_TYPE_1 ? R.layout.item_view_linear : R.layout.item_frc_linear_hor, parent, false));
         }
 
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
             if (getItemViewType(position) == VIEW_TYPE_2) {
-                holder.mTvTxt.setText(String.format("View Type 2 %s", mDatas.get(position)));
+                FamiliarRecyclerView mHorFamiliarRecyclerView = (FamiliarRecyclerView)holder.itemView.findViewById(R.id.mHorRecyclerView);
+                if (mHorFamiliarRecyclerView.getChildCount() == 0) {
+                    List<String> mDatas = new ArrayList<>();
+                    mDatas.addAll(getDatas());
+                    mHorFamiliarRecyclerView.setAdapter(myAdapter2 = new MyAdapter2(mDatas, 1));
+
+                    mHorFamiliarRecyclerView.setOnItemClickListener(new FamiliarRecyclerView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(FamiliarRecyclerView familiarRecyclerView, View view, int position) {
+                            myAdapter2.getData().remove(position);
+                            myAdapter2.notifyItemRemoved(position);
+                        }
+                    });
+                } else {
+                    mHorFamiliarRecyclerView.reRegisterAdapterDataObserver();
+                }
             } else {
                 holder.mTvTxt.setText(mDatas.get(position));
             }
@@ -158,6 +209,35 @@ public class ImitateListViewDemoActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return mDatas.size();
+        }
+    }
+
+    class MyAdapter2 extends RecyclerView.Adapter<MyViewHolder> {
+        private List<String> data;
+        private int type;
+
+        public MyAdapter2(List<String> data, int type) {
+            this.data = data;
+            this.type = type;
+        }
+
+        @Override
+        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new MyViewHolder(LayoutInflater.from(ImitateListViewDemoActivity.this).inflate(type == 1 ? R.layout.item_view_linear_hor : R.layout.item_view_grid_hor, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(MyViewHolder holder, int position) {
+            holder.mTvTxt.setText(data.get(position));
+        }
+
+        @Override
+        public int getItemCount() {
+            return data.size();
+        }
+
+        public List<String> getData() {
+            return data;
         }
     }
 
@@ -202,7 +282,7 @@ public class ImitateListViewDemoActivity extends AppCompatActivity {
     private List<String> getDatas() {
         List<String> tempDatas = new ArrayList<>();
         int curMaxData =  mDatas.size();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 30; i++) {
             tempDatas.add("item:" + (curMaxData + i));
         }
 

@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +31,9 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
     private FamiliarRecyclerView.OnItemLongClickListener mOnItemLongClickListener;
     private FamiliarRecyclerView mFamiliarRecyclerView;
     private long mLastClickTime;
+    private FamiliarRecyclerView.OnHeadViewBindViewHolderListener mOnHeadViewBindViewHolderListener;
+    private FamiliarRecyclerView.OnFooterViewBindViewHolderListener mOnFooterViewBindViewHolderListener;
+    private List<Integer> mHeadOrFooterInitInvokeViewBindViewFlag = new ArrayList<>();
 
     public FamiliarWrapRecyclerViewAdapter(FamiliarRecyclerView familiarRecyclerView, RecyclerView.Adapter reqAdapter, List<View> mHeaderView, List<View> mFooterView, int layoutManagerType) {
         this.mFamiliarRecyclerView = familiarRecyclerView;
@@ -177,8 +181,27 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        int curItemViewType = getItemViewType(position);
 
-        if (getItemViewType(position) >= 0) {
+        if (curItemViewType == VIEW_TYPE_HEADER && null != mOnHeadViewBindViewHolderListener) {
+            // head view
+            boolean isInitializeInvoke = false;
+            int tempHeadViewHashCode = holder.itemView.hashCode();
+            if (!mHeadOrFooterInitInvokeViewBindViewFlag.contains(tempHeadViewHashCode)) {
+                mHeadOrFooterInitInvokeViewBindViewFlag.add(tempHeadViewHashCode);
+                isInitializeInvoke = true;
+            }
+            mOnHeadViewBindViewHolderListener.onHeadViewBindViewHolder(holder, position, isInitializeInvoke);
+        } else if (curItemViewType == VIEW_TYPE_FOOTER && null != mOnFooterViewBindViewHolderListener) {
+            // footer view
+            boolean isInitializeInvoke = false;
+            int tempFooterViewHashCode = holder.itemView.hashCode();
+            if (!mHeadOrFooterInitInvokeViewBindViewFlag.contains(tempFooterViewHashCode)) {
+                mHeadOrFooterInitInvokeViewBindViewFlag.add(tempFooterViewHashCode);
+                isInitializeInvoke = true;
+            }
+            mOnFooterViewBindViewHolderListener.onFooterViewBindViewHolder(holder, position - getHeadersCount() - (null != mReqAdapter ? mReqAdapter.getItemCount() : 0), isInitializeInvoke);
+        } else if (curItemViewType >= 0) {
             // item view
             final int adjPosition = position - getHeadersCount();
             int adapterCount;
@@ -216,6 +239,14 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
             return mOnItemLongClickListener.onItemLongClick(mFamiliarRecyclerView, v, mFamiliarRecyclerView.getChildAdapterPosition(v) - mFamiliarRecyclerView.getHeaderViewsCount());
         }
         return false;
+    }
+
+    public void setOnHeadViewBindViewHolderListener(FamiliarRecyclerView.OnHeadViewBindViewHolderListener mOnHeadViewBindViewHolderListener) {
+        this.mOnHeadViewBindViewHolderListener = mOnHeadViewBindViewHolderListener;
+    }
+
+    public void setOnFooterViewBindViewHolderListener(FamiliarRecyclerView.OnFooterViewBindViewHolderListener mOnFooterViewBindViewHolderListener) {
+        this.mOnFooterViewBindViewHolderListener = mOnFooterViewBindViewHolderListener;
     }
 
     class EmptyHeaderOrFooterViewHolder extends RecyclerView.ViewHolder {

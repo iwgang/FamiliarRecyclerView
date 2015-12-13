@@ -8,14 +8,14 @@
 ![](https://raw.githubusercontent.com/iwgang/FamiliarRecyclerView/master/screenshot/screenshot.gif)  
 
 ### gradle
-    compile 'com.github.iwgang:familiarrecyclerview:1.2'
+    compile 'com.github.iwgang:familiarrecyclerview:1.2.1'
 
 ### 这些是不是很熟悉？
 ```
-// 添加/删除头部View (支持多个)
+// 添加/删除 头部View (支持多个)
 mRecyclerView.addHeaderView() 和 .removeHeaderView()
 
-// 添加/删除底部View (支持多个)
+// 添加/删除 底部View (支持多个)
 mRecyclerView.addFooterView() 和 .removeFooterView()
 
 // 设置分割线（也可以在布局文件中直接指定分割线Divider及分割线大小，当然你也可以使用自己的分割线实现）
@@ -40,7 +40,7 @@ mRecyclerView.setOnItemLongClickListener(new FamiliarRecyclerView.OnItemLongClic
     }
 });
 
-// 设置滚到到顶部或底部时的事件回调
+// 设置滚动到顶部或底部时的事件回调
 mRecyclerView.setOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecyclerView.getLayoutManager()) {
     @Override
     public void onScrolledToTop() {
@@ -103,9 +103,9 @@ mRecyclerView.setOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecy
 ### 自定义配置
     参数 | 类型 | 默认值 | 说明
 --- | --- | ---| ---
-frv_divider                 | reference和color               | 无        | 全局分割线divider
-frv_dividerVertical         | reference和color               | 无        | 垂直分割线divider
-frv_dividerHorizontal       | reference和color               | 无        | 水平分割线divider
+frv_divider                 | reference / color               | 无        | 全局分割线divider
+frv_dividerVertical         | reference / color               | 无        | 垂直分割线divider
+frv_dividerHorizontal       | reference / color               | 无        | 水平分割线divider
 frv_dividerHeight           | dimension                      | 1px       | 全局分割线size
 frv_dividerVerticalHeight   | dimension                      | 1px       | 垂直分割线size
 frv_dividerHorizontalHeight | dimension                      | 1px       | 水平分割线size

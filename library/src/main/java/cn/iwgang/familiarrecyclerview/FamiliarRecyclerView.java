@@ -51,6 +51,8 @@ public class FamiliarRecyclerView extends RecyclerView {
     private View mEmptyView;
     private OnItemClickListener mTempOnItemClickListener;
     private OnItemLongClickListener mTempOnItemLongClickListener;
+    private OnHeadViewBindViewHolderListener mTempOnHeadViewBindViewHolderListener;
+    private OnFooterViewBindViewHolderListener mTempOnFooterViewBindViewHolderListener;
     private int mLayoutManagerType;
 
     private boolean hasShowEmptyView = false;
@@ -229,6 +231,8 @@ public class FamiliarRecyclerView extends RecyclerView {
 
         mWrapFamiliarRecyclerViewAdapter.setOnItemClickListener(mTempOnItemClickListener);
         mWrapFamiliarRecyclerViewAdapter.setOnItemLongClickListener(mTempOnItemLongClickListener);
+        mWrapFamiliarRecyclerViewAdapter.setOnHeadViewBindViewHolderListener(mTempOnHeadViewBindViewHolderListener);
+        mWrapFamiliarRecyclerViewAdapter.setOnFooterViewBindViewHolderListener(mTempOnFooterViewBindViewHolderListener);
 
         mReqAdapter.registerAdapterDataObserver(mReqAdapterDataObserver);
         super.setAdapter(mWrapFamiliarRecyclerViewAdapter);
@@ -236,11 +240,16 @@ public class FamiliarRecyclerView extends RecyclerView {
         processEmptyView();
     }
 
+    public void reRegisterAdapterDataObserver() {
+        if (null != mReqAdapter && !mReqAdapter.hasObservers()) {
+            mReqAdapter.registerAdapterDataObserver(mReqAdapterDataObserver);
+        }
+    }
+
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-
-        if (null != mReqAdapter) {
+        if (null != mReqAdapter && mReqAdapter.hasObservers()) {
             mReqAdapter.unregisterAdapterDataObserver(mReqAdapterDataObserver);
         }
     }
@@ -482,6 +491,30 @@ public class FamiliarRecyclerView extends RecyclerView {
         }
     }
 
+    /**
+     * HeadView onBindViewHolder callback
+     * @param onHeadViewBindViewHolderListener OnHeadViewBindViewHolderListener
+     */
+    public void setOnHeadViewBindViewHolderListener(FamiliarRecyclerView.OnHeadViewBindViewHolderListener onHeadViewBindViewHolderListener) {
+        if (null != mWrapFamiliarRecyclerViewAdapter) {
+            mWrapFamiliarRecyclerViewAdapter.setOnHeadViewBindViewHolderListener(onHeadViewBindViewHolderListener);
+        } else {
+            this.mTempOnHeadViewBindViewHolderListener = onHeadViewBindViewHolderListener;
+        }
+    }
+
+    /**
+     * FooterView onBindViewHolder callback
+     * @param onFooterViewBindViewHolderListener OnFooterViewBindViewHolderListener
+     */
+    public void setOnFooterViewBindViewHolderListener(FamiliarRecyclerView.OnFooterViewBindViewHolderListener onFooterViewBindViewHolderListener) {
+        if (null != mWrapFamiliarRecyclerViewAdapter) {
+            mWrapFamiliarRecyclerViewAdapter.setOnFooterViewBindViewHolderListener(onFooterViewBindViewHolderListener);
+        } else {
+            this.mTempOnFooterViewBindViewHolderListener = onFooterViewBindViewHolderListener;
+        }
+    }
+
     public void addHeaderView(View v) {
         addHeaderView(v, false);
     }
@@ -653,6 +686,14 @@ public class FamiliarRecyclerView extends RecyclerView {
 
     public interface OnItemLongClickListener {
         boolean onItemLongClick(FamiliarRecyclerView familiarRecyclerView, View view, int position);
+    }
+
+    public interface OnHeadViewBindViewHolderListener {
+        void onHeadViewBindViewHolder(RecyclerView.ViewHolder holder, int position, boolean isInitializeInvoke);
+    }
+
+    public interface OnFooterViewBindViewHolderListener {
+        void onFooterViewBindViewHolder(RecyclerView.ViewHolder holder, int position, boolean isInitializeInvoke);
     }
 
     private AdapterDataObserver mReqAdapterDataObserver = new AdapterDataObserver() {
