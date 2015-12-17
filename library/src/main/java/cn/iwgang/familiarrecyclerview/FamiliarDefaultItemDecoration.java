@@ -17,6 +17,7 @@ import android.view.View;
  * https://github.com/iwgang/FamiliarRecyclerView
  */
 public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
+    private FamiliarRecyclerView mFamiliarRecyclerView;
     private Drawable mVerticalDividerDrawable;
     private Drawable mHorizontalDividerDrawable;
     private int mVerticalDividerDrawableHeight;
@@ -31,46 +32,47 @@ public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
     private float mUnDivisibleValue = 0;
     private boolean isDivisible = true;
 
-    public FamiliarDefaultItemDecoration(RecyclerView recyclerView, Drawable dividerVertical, Drawable dividerHorizontal, int dividerDrawableSizeVertical, int dividerDrawableSizeHorizontal) {
+    public FamiliarDefaultItemDecoration(FamiliarRecyclerView familiarRecyclerView, Drawable dividerVertical, Drawable dividerHorizontal, int dividerDrawableSizeVertical, int dividerDrawableSizeHorizontal) {
+        this.mFamiliarRecyclerView = familiarRecyclerView;
         this.mVerticalDividerDrawable = dividerVertical;
         this.mHorizontalDividerDrawable = dividerHorizontal;
         this.mVerticalDividerDrawableHeight = dividerDrawableSizeVertical;
         this.mHorizontalDividerDrawableHeight = dividerDrawableSizeHorizontal;
-
-        init(recyclerView);
+        initLayoutManagerType();
     }
 
-    private void init(RecyclerView mRecyclerView) {
-        RecyclerView.LayoutManager mLayoutManager = mRecyclerView.getLayoutManager();
-        if (mLayoutManager.getClass().isAssignableFrom(LinearLayoutManager.class)) {
-            mLayoutManagerType = FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_LINEAR;
-
-            LinearLayoutManager curLinearLayoutManager = (LinearLayoutManager)mLayoutManager;
-            if (curLinearLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
-                mOrientation = OrientationHelper.HORIZONTAL;
-            } else {
-                mOrientation = OrientationHelper.VERTICAL;
-            }
-        } else if (mLayoutManager.getClass().isAssignableFrom(GridLayoutManager.class)) {
-            mLayoutManagerType = FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_GRID;
-
-            GridLayoutManager curGridLayoutManager = (GridLayoutManager)mLayoutManager;
-            mGridSpanCount = curGridLayoutManager.getSpanCount();
-            if (curGridLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
-                mOrientation = OrientationHelper.HORIZONTAL;
-            } else {
-                mOrientation = OrientationHelper.VERTICAL;
-            }
-        } else if (mLayoutManager.getClass().isAssignableFrom(StaggeredGridLayoutManager.class)) {
-            mLayoutManagerType = FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID;
-
-            StaggeredGridLayoutManager curStaggeredGridLayoutManager = (StaggeredGridLayoutManager)mLayoutManager;
-            mGridSpanCount = curStaggeredGridLayoutManager.getSpanCount();
-            if (curStaggeredGridLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
-                mOrientation = OrientationHelper.HORIZONTAL;
-            } else {
-                mOrientation = OrientationHelper.VERTICAL;
-            }
+    private void initLayoutManagerType() {
+        this.mLayoutManagerType = mFamiliarRecyclerView.getCurLayoutManagerType();
+        RecyclerView.LayoutManager layoutManager = mFamiliarRecyclerView.getLayoutManager();
+        switch (mLayoutManagerType) {
+            case FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_LINEAR:
+                LinearLayoutManager curLinearLayoutManager = (LinearLayoutManager)layoutManager;
+                if (curLinearLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
+                    mOrientation = OrientationHelper.HORIZONTAL;
+                } else {
+                    mOrientation = OrientationHelper.VERTICAL;
+                }
+                break;
+            case FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_GRID:
+                GridLayoutManager curGridLayoutManager = (GridLayoutManager)layoutManager;
+                mGridSpanCount = curGridLayoutManager.getSpanCount();
+                if (curGridLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
+                    mOrientation = OrientationHelper.HORIZONTAL;
+                } else {
+                    mOrientation = OrientationHelper.VERTICAL;
+                }
+                break;
+            case FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID:
+                StaggeredGridLayoutManager curStaggeredGridLayoutManager = (StaggeredGridLayoutManager)layoutManager;
+                mGridSpanCount = curStaggeredGridLayoutManager.getSpanCount();
+                if (curStaggeredGridLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
+                    mOrientation = OrientationHelper.HORIZONTAL;
+                } else {
+                    mOrientation = OrientationHelper.VERTICAL;
+                }
+                break;
+            default:
+                this.mLayoutManagerType = FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_LINEAR;
         }
 
         initDivisible();

@@ -128,14 +128,14 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
                 int footerViewCount = mFooterView.size();
                 if (curHeaderOrFooterPos >= footerViewCount) {
                     curHeaderOrFooterPos = footerViewCount - 1;
-                    tempFooterView = mFooterView.get(curHeaderOrFooterPos);
-                    ViewParent tempFooterViewParent = tempFooterView.getParent();
-                    if (null != tempFooterViewParent) {
-                        ((ViewGroup)tempFooterViewParent).removeView(tempFooterView);
-                    }
-                } else {
-                    tempFooterView = mFooterView.get(curHeaderOrFooterPos);
                 }
+
+                tempFooterView = mFooterView.get(curHeaderOrFooterPos);
+                ViewParent tempFooterViewParent = tempFooterView.getParent();
+                if (null != tempFooterViewParent) {
+                    ((ViewGroup)tempFooterViewParent).removeView(tempFooterView);
+                }
+
                 if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID) {
                     FrameLayout mContainerView = new FrameLayout(tempFooterView.getContext());
                     mContainerView.addView(tempFooterView);
