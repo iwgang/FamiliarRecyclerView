@@ -174,30 +174,39 @@ public class ImitateListViewDemoActivity extends AppCompatActivity {
 
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new MyViewHolder(LayoutInflater.from(ImitateListViewDemoActivity.this).inflate(viewType == VIEW_TYPE_1 ? R.layout.item_view_linear : R.layout.item_frc_linear_hor, parent, false));
+            MyViewHolder holder = new MyViewHolder(LayoutInflater.from(ImitateListViewDemoActivity.this).inflate(viewType == VIEW_TYPE_1 ? R.layout.item_view_linear : R.layout.item_frc_linear_hor, parent, false));
+            if (viewType == VIEW_TYPE_2) {
+                Log.i("wg", " VIEW_TYPE_2 ");
+
+                List<String> mDatas = new ArrayList<>();
+                mDatas.addAll(getDatas());
+
+                FamiliarRecyclerView mHorFamiliarRecyclerView = (FamiliarRecyclerView)holder.itemView.findViewById(R.id.mHorRecyclerView);
+                mHorFamiliarRecyclerView.setAdapter(myAdapter2 = new MyAdapter2(mDatas, 1));
+                mHorFamiliarRecyclerView.setOnItemClickListener(new FamiliarRecyclerView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(FamiliarRecyclerView familiarRecyclerView, View view, int position) {
+                        myAdapter2.getData().remove(position);
+                        myAdapter2.notifyItemRemoved(position);
+                    }
+                });
+            }
+
+            return holder;
         }
 
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
-            if (getItemViewType(position) == VIEW_TYPE_2) {
-                FamiliarRecyclerView mHorFamiliarRecyclerView = (FamiliarRecyclerView)holder.itemView.findViewById(R.id.mHorRecyclerView);
-                if (mHorFamiliarRecyclerView.getChildCount() == 0) {
-                    List<String> mDatas = new ArrayList<>();
-                    mDatas.addAll(getDatas());
-                    mHorFamiliarRecyclerView.setAdapter(myAdapter2 = new MyAdapter2(mDatas, 1));
-
-                    mHorFamiliarRecyclerView.setOnItemClickListener(new FamiliarRecyclerView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(FamiliarRecyclerView familiarRecyclerView, View view, int position) {
-                            myAdapter2.getData().remove(position);
-                            myAdapter2.notifyItemRemoved(position);
-                        }
-                    });
-                } else {
-                    mHorFamiliarRecyclerView.reRegisterAdapterDataObserver();
-                }
-            } else {
-                holder.mTvTxt.setText(mDatas.get(position));
+            switch (getItemViewType(position)) {
+                case VIEW_TYPE_1:
+                    holder.mTvTxt.setText(mDatas.get(position));
+                    break;
+                case VIEW_TYPE_2:
+                    FamiliarRecyclerView mHorFamiliarRecyclerView = (FamiliarRecyclerView)holder.itemView.findViewById(R.id.mHorRecyclerView);
+                    if (mHorFamiliarRecyclerView.getChildCount() > 0) {
+                        mHorFamiliarRecyclerView.reRegisterAdapterDataObserver();
+                    }
+                    break;
             }
         }
 

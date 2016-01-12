@@ -51,6 +51,10 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
         return null != mFooterView ? mFooterView.size() : 0;
     }
 
+    private int getReqAdapterCount() {
+        return null != mReqAdapter ? mReqAdapter.getItemCount() : 0;
+    }
+
     @Override
     public int getItemCount() {
         int count = 0;
@@ -74,17 +78,16 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
 
     @Override
     public int getItemViewType(int position) {
-        int headersCount = getHeadersCount();
-
         // header view
-        if (position < headersCount) {
+        if (isHeaderView(position)) {
             this.curHeaderOrFooterPos = position;
             return VIEW_TYPE_HEADER;
         }
 
+        int headersCount = getHeadersCount();
         // item view
         int adapterCount = 0;
-        if (mReqAdapter != null && mReqAdapter.getItemCount() > 0 && position >= headersCount) {
+        if (getReqAdapterCount() > 0 && position >= headersCount) {
             int adjPosition = position - headersCount;
             adapterCount = mReqAdapter.getItemCount();
             if (adjPosition < adapterCount) {
@@ -117,6 +120,12 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
                 } else {
                     headerViewHolder = new EmptyHeaderOrFooterViewHolder(tempHeadView);
                 }
+
+                // fix multiple headerView disorder
+                if (mHeaderView.size() > 2) {
+                    headerViewHolder.setIsRecyclable(false);
+                }
+
                 return headerViewHolder;
             }
             case VIEW_TYPE_FOOTER: {
@@ -146,6 +155,12 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
                 } else {
                     footerViewHolder = new EmptyHeaderOrFooterViewHolder(tempFooterView);
                 }
+
+                // fix multiple footerView disorder
+                if (mFooterView.size() > 2) {
+                    footerViewHolder.setIsRecyclable(false);
+                }
+
                 return footerViewHolder;
             }
             case VIEW_TYPE_EMPTY_VIEW: {
@@ -180,6 +195,64 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
     }
 
     @Override
+    public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+
+        int position = holder.getAdapterPosition();
+        if (null == mReqAdapter || isHeaderView(position) || isFooterView(position)) {
+            return ;
+        }
+
+        mReqAdapter.onViewAttachedToWindow(holder);
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+
+        int position = holder.getAdapterPosition();
+        if (null == mReqAdapter || isHeaderView(position) || isFooterView(position)) {
+            return ;
+        }
+
+        mReqAdapter.onViewDetachedFromWindow(holder);
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+
+        if (null == mReqAdapter) {
+            return ;
+        }
+
+        mReqAdapter.onAttachedToRecyclerView(recyclerView);
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+
+        if (null == mReqAdapter) {
+            return ;
+        }
+
+        mReqAdapter.onDetachedFromRecyclerView(recyclerView);
+    }
+
+    @Override
+    public void onViewRecycled(RecyclerView.ViewHolder holder) {
+        super.onViewRecycled(holder);
+
+        int position = holder.getAdapterPosition();
+        if (null == mReqAdapter || isHeaderView(position) || isFooterView(position)) {
+            return ;
+        }
+
+        mReqAdapter.onViewRecycled(holder);
+    }
+
+    @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         int curItemViewType = getItemViewType(position);
 
@@ -200,7 +273,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
                 mHeadOrFooterInitInvokeViewBindViewFlag.add(tempFooterViewHashCode);
                 isInitializeInvoke = true;
             }
-            mOnFooterViewBindViewHolderListener.onFooterViewBindViewHolder(holder, position - getHeadersCount() - (null != mReqAdapter ? mReqAdapter.getItemCount() : 0), isInitializeInvoke);
+            mOnFooterViewBindViewHolderListener.onFooterViewBindViewHolder(holder, position - getHeadersCount() - getReqAdapterCount(), isInitializeInvoke);
         } else if (curItemViewType >= 0) {
             // item view
             final int adjPosition = position - getHeadersCount();
@@ -247,6 +320,14 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
 
     public void setOnFooterViewBindViewHolderListener(FamiliarRecyclerView.OnFooterViewBindViewHolderListener mOnFooterViewBindViewHolderListener) {
         this.mOnFooterViewBindViewHolderListener = mOnFooterViewBindViewHolderListener;
+    }
+
+    private boolean isHeaderView(int position) {
+        return position < getHeadersCount();
+    }
+
+    private boolean isFooterView(int position) {
+        return getFootersCount() > 0 && position - getHeadersCount() - getReqAdapterCount() >= 0;
     }
 
     class EmptyHeaderOrFooterViewHolder extends RecyclerView.ViewHolder {
