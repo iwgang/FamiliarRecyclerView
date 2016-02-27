@@ -8,7 +8,7 @@
 ![](https://raw.githubusercontent.com/iwgang/FamiliarRecyclerView/master/screenshot/screenshot.gif)  
 
 ### gradle
-    compile 'com.github.iwgang:familiarrecyclerview:1.2.3'
+    compile 'com.github.iwgang:familiarrecyclerview:1.2.4'
 
 ### 这些是不是很熟悉？
 ```

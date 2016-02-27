@@ -114,7 +114,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
                     FrameLayout mContainerView = new FrameLayout(tempHeadView.getContext());
                     mContainerView.addView(tempHeadView);
                     headerViewHolder = new EmptyHeaderOrFooterViewHolder(mContainerView);
-                    StaggeredGridLayoutManager.LayoutParams layoutParams = new StaggeredGridLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    StaggeredGridLayoutManager.LayoutParams layoutParams = new StaggeredGridLayoutManager.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     layoutParams.setFullSpan(true);
                     headerViewHolder.itemView.setLayoutParams(layoutParams);
                 } else {
@@ -149,7 +149,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
                     FrameLayout mContainerView = new FrameLayout(tempFooterView.getContext());
                     mContainerView.addView(tempFooterView);
                     footerViewHolder = new EmptyHeaderOrFooterViewHolder(mContainerView);
-                    StaggeredGridLayoutManager.LayoutParams layoutParams = new StaggeredGridLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    StaggeredGridLayoutManager.LayoutParams layoutParams = new StaggeredGridLayoutManager.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     layoutParams.setFullSpan(true);
                     footerViewHolder.itemView.setLayoutParams(layoutParams);
                 } else {
@@ -171,7 +171,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
                     FrameLayout mContainerView = new FrameLayout(emptyView.getContext());
                     mContainerView.addView(emptyView);
                     emptyViewHolder = new EmptyHeaderOrFooterViewHolder(mContainerView);
-                    StaggeredGridLayoutManager.LayoutParams layoutParams = new StaggeredGridLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    StaggeredGridLayoutManager.LayoutParams layoutParams = new StaggeredGridLayoutManager.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     layoutParams.setFullSpan(true);
                     emptyViewHolder.itemView.setLayoutParams(layoutParams);
                 } else {

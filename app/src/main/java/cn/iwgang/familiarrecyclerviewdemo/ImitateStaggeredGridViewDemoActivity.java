@@ -138,7 +138,7 @@ public class ImitateStaggeredGridViewDemoActivity extends AppCompatActivity {
     class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new MyViewHolder(LayoutInflater.from(ImitateStaggeredGridViewDemoActivity.this).inflate(R.layout.item_view_staggered_grid, parent, false));
+            return new MyViewHolder(LayoutInflater.from(ImitateStaggeredGridViewDemoActivity.this).inflate(R.layout.item_view_staggered_grid_ver, parent, false));
         }
 
         @Override

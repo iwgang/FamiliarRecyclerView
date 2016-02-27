@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -106,7 +107,7 @@ public class GridLayoutActivity extends AppCompatActivity {
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             int layoutId = isVertical ? R.layout.item_view_grid : R.layout.item_view_grid_hor;
-            return new MyViewHolder(View.inflate(GridLayoutActivity.this, layoutId, null));
+            return new MyViewHolder(LayoutInflater.from(GridLayoutActivity.this).inflate(layoutId, parent, false));
         }
 
         @Override

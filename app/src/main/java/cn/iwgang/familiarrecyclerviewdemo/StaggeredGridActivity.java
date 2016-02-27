@@ -18,7 +18,6 @@ import java.util.List;
 
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerViewOnScrollListener;
-import jp.wasabeef.recyclerview.animators.ScaleInAnimator;
 
 public class StaggeredGridActivity extends AppCompatActivity {
     private FamiliarRecyclerView mRecyclerView;
@@ -111,7 +110,7 @@ public class StaggeredGridActivity extends AppCompatActivity {
 
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new MyViewHolder(LayoutInflater.from(StaggeredGridActivity.this).inflate(R.layout.item_view_staggered_grid, parent, false));
+            return new MyViewHolder(LayoutInflater.from(StaggeredGridActivity.this).inflate(isVertical ? R.layout.item_view_staggered_grid_ver : R.layout.item_view_staggered_grid_hor, parent, false));
         }
 
         @Override
