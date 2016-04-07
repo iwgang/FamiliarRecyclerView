@@ -29,6 +29,7 @@ public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
     private int mGridSpanCount = 0;
     private boolean isHeaderDividersEnabled;
     private boolean isFooterDividersEnabled;
+    private boolean isNotShowGridEndDivider;
     private float mUnDivisibleValue = 0;
     private boolean isDivisible = true;
 
@@ -119,6 +120,10 @@ public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
 
     public void setFooterDividersEnabled(boolean isFooterDividersEnabled) {
         this.isFooterDividersEnabled = isFooterDividersEnabled;
+    }
+
+    public void setNotShowGridEndDivider(boolean isNotShowGridEndDivider) {
+        this.isNotShowGridEndDivider = isNotShowGridEndDivider;
     }
 
     @Override
@@ -234,7 +239,7 @@ public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
 
                     if (mOrientation == OrientationHelper.HORIZONTAL) {
                         // horizontal draw divider
-                        if (!isGridLayoutLastNum && !isGridItemLayoutLastColumn) {
+                        if (!isNotShowGridEndDivider || (!isGridLayoutLastNum && !isGridItemLayoutLastColumn)) {
                             int horizontalLeft = childView.getLeft() - childViewParams.leftMargin;
                             int horizontalTop = childView.getBottom() + childViewParams.bottomMargin;
                             int horizontalRight = childView.getRight() + childViewParams.rightMargin;
@@ -283,9 +288,9 @@ public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
                         mVerticalDividerDrawable.draw(c);
                     } else {
                         // draw vertical divider
-                        if (!isGridItemLayoutLastColumn
+                        if (!isNotShowGridEndDivider || (!isGridItemLayoutLastColumn
                                 && ((mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_GRID && !isGridLayoutLastNum)
-                                || mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID)) {
+                                || mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID))) {
                             int verticalLeft = childView.getRight() + childViewParams.rightMargin;
                             int verticalTop = childView.getTop() - childViewParams.topMargin;
                             int verticalRight = verticalLeft + mVerticalDividerDrawableHeight;

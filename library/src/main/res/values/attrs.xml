@@ -24,6 +24,7 @@
         <attr name="frv_isReverseLayout" format="boolean" />
         <attr name="frv_headerDividersEnabled" format="boolean" />
         <attr name="frv_footerDividersEnabled" format="boolean" />
+        <attr name="frv_isNotShowGridEndDivider" format="boolean" />
     </declare-styleable>
 
 </resources>

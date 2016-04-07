@@ -29,7 +29,7 @@ public class FamiliarRecyclerView extends RecyclerView {
     private static final int DEF_LAYOUT_MANAGER_TYPE = LAYOUT_MANAGER_TYPE_LINEAR;
     private static final int DEF_GRID_SPAN_COUNT = 2;
     private static final int DEF_LAYOUT_MANAGER_ORIENTATION = OrientationHelper.VERTICAL;
-    private static final int DEF_DIVIDER_HEIGHT = 1;
+    private static final int DEF_DIVIDER_HEIGHT = 30;
 
     private List<View> mHeaderView = new ArrayList<View>();
     private List<View> mFooterView = new ArrayList<View>();
@@ -47,6 +47,7 @@ public class FamiliarRecyclerView extends RecyclerView {
     private boolean isFooterDividersEnabled = false;
     private boolean isDefaultItemDecoration = true;
     private boolean isKeepShowHeadOrFooter = false;
+    private boolean isNotShowGridEndDivider = false;
     private int mEmptyViewResId;
     private View mEmptyView;
     private OnItemClickListener mTempOnItemClickListener;
@@ -85,6 +86,7 @@ public class FamiliarRecyclerView extends RecyclerView {
         isKeepShowHeadOrFooter = ta.getBoolean(R.styleable.FamiliarRecyclerView_frv_isEmptyViewKeepShowHeadOrFooter, false);
         isHeaderDividersEnabled = ta.getBoolean(R.styleable.FamiliarRecyclerView_frv_headerDividersEnabled, false);
         isFooterDividersEnabled = ta.getBoolean(R.styleable.FamiliarRecyclerView_frv_footerDividersEnabled, false);
+        isNotShowGridEndDivider = ta.getBoolean(R.styleable.FamiliarRecyclerView_frv_isNotShowGridEndDivider, false);
         if (ta.hasValue(R.styleable.FamiliarRecyclerView_frv_layoutManager)) {
             int layoutManagerType = ta.getInt(R.styleable.FamiliarRecyclerView_frv_layoutManager, DEF_LAYOUT_MANAGER_TYPE);
             int layoutManagerOrientation = ta.getInt(R.styleable.FamiliarRecyclerView_frv_layoutManagerOrientation, DEF_LAYOUT_MANAGER_ORIENTATION);
@@ -210,7 +212,10 @@ public class FamiliarRecyclerView extends RecyclerView {
             }
             mEmptyViewResId = -1;
         } else if (isKeepShowHeadOrFooter && null != mEmptyView) {
-            ((ViewGroup)mEmptyView.getParent()).removeView(mEmptyView);
+            ViewParent emptyViewParent = mEmptyView.getParent();
+            if (null != emptyViewParent && emptyViewParent instanceof ViewGroup) {
+                ((ViewGroup) emptyViewParent).removeView(mEmptyView);
+            }
         }
 
         if (null == adapter) {
@@ -322,6 +327,7 @@ public class FamiliarRecyclerView extends RecyclerView {
         mFamiliarDefaultItemDecoration.setItemViewBothSidesMargin(mItemViewBothSidesMargin);
         mFamiliarDefaultItemDecoration.setHeaderDividersEnabled(isHeaderDividersEnabled);
         mFamiliarDefaultItemDecoration.setFooterDividersEnabled(isFooterDividersEnabled);
+        mFamiliarDefaultItemDecoration.setNotShowGridEndDivider(isNotShowGridEndDivider);
 
         if (null != getAdapter()) {
             needInitAddItemDescration = false;
@@ -382,6 +388,33 @@ public class FamiliarRecyclerView extends RecyclerView {
 
     public boolean isKeepShowHeadOrFooter() {
         return isKeepShowHeadOrFooter;
+    }
+
+    public void setDivider(int height, Drawable divider) {
+        if (!isDefaultItemDecoration || height <= 0) return ;
+
+        this.mVerticalDividerHeight = height;
+        this.mHorizontalDividerHeight = height;
+
+        if (this.mVerticalDivider != divider) {
+            this.mVerticalDivider = divider;
+        }
+
+        if (this.mHorizontalDivider != divider) {
+            this.mHorizontalDivider = divider;
+        }
+
+        if (null != mFamiliarDefaultItemDecoration) {
+            mFamiliarDefaultItemDecoration.setVerticalDividerDrawableHeight(mVerticalDividerHeight);
+            mFamiliarDefaultItemDecoration.setHorizontalDividerDrawableHeight(mHorizontalDividerHeight);
+
+            mFamiliarDefaultItemDecoration.setVerticalDividerDrawable(mVerticalDivider);
+            mFamiliarDefaultItemDecoration.setHorizontalDividerDrawable(mHorizontalDivider);
+
+            if (null != mWrapFamiliarRecyclerViewAdapter) {
+                mWrapFamiliarRecyclerViewAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     public void setDivider(Drawable divider) {
@@ -682,6 +715,17 @@ public class FamiliarRecyclerView extends RecyclerView {
         this.isFooterDividersEnabled = isFooterDividersEnabled;
         if (isDefaultItemDecoration && null != mFamiliarDefaultItemDecoration) {
             mFamiliarDefaultItemDecoration.setFooterDividersEnabled(isFooterDividersEnabled);
+
+            if (null != mWrapFamiliarRecyclerViewAdapter) {
+                mWrapFamiliarRecyclerViewAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    public void setNotShowGridEndDivider(boolean isNotShowGridEndDivider) {
+        this.isNotShowGridEndDivider = isNotShowGridEndDivider;
+        if (isDefaultItemDecoration && null != mFamiliarDefaultItemDecoration) {
+            mFamiliarDefaultItemDecoration.setNotShowGridEndDivider(isNotShowGridEndDivider);
 
             if (null != mWrapFamiliarRecyclerViewAdapter) {
                 mWrapFamiliarRecyclerViewAdapter.notifyDataSetChanged();
