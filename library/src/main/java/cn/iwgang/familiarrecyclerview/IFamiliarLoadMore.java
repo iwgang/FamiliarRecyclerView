@@ -3,7 +3,7 @@ package cn.iwgang.familiarrecyclerview;
 import android.view.View;
 
 /**
- * FamiliarRefreshRecyclerView --> LoadMore interface
+ * LoadMoreView interface
  * Created by iWgang on 16/04/13.
  * https://github.com/iwgang/FamiliarRecyclerView
  */
