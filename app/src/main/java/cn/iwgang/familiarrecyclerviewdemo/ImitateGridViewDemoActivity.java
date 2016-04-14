@@ -1,7 +1,7 @@
 package cn.iwgang.familiarrecyclerviewdemo;
 
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,18 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerView;
-import cn.iwgang.familiarrecyclerview.FamiliarRecyclerViewOnScrollListener;
+import cn.iwgang.familiarrecyclerview.FamiliarRefreshRecyclerView;
 
 public class ImitateGridViewDemoActivity extends AppCompatActivity {
-    private FamiliarRecyclerView mRecyclerView;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private View mFooterLoadMoreView;
-    private ProgressBar mPbLoadMoreProgressBar;
-    private TextView mTvLoadMoreText;
+    private FamiliarRefreshRecyclerView mCvRefreshGridRecyclerView;
+    private FamiliarRecyclerView mFamiliarRecyclerView;
 
     private List<String> mDatas;
     private MyAdapter mAdapter;
-    private boolean isVertical = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,18 +35,27 @@ public class ImitateGridViewDemoActivity extends AppCompatActivity {
         mDatas = new ArrayList<>();
         mDatas.addAll(getDatas());
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.mSwipeRefreshLayout);
-        mRecyclerView = (FamiliarRecyclerView)findViewById(R.id.mRecyclerView);
+        mCvRefreshGridRecyclerView = (FamiliarRefreshRecyclerView)findViewById(R.id.cv_refreshGridRecyclerView);
+        mCvRefreshGridRecyclerView.setLoadMoreView(new LoadMoreView(this));
+        mCvRefreshGridRecyclerView.setColorSchemeColors(Color.BLUE, Color.RED, Color.YELLOW, Color.GREEN);
+        mCvRefreshGridRecyclerView.setLoadMoreEnabled(true);
+
+        mFamiliarRecyclerView = mCvRefreshGridRecyclerView.getFamiliarRecyclerView();
+        // ItemAnimator
+        mFamiliarRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        // head view
+        mFamiliarRecyclerView.addHeaderView(HeaderAndFooterViewUtil.getHeadView(this, true, 0xFFFF5000, "Head View 1"));
+
 
         // Item Click and Item Long Click
-        mRecyclerView.setOnItemClickListener(new FamiliarRecyclerView.OnItemClickListener() {
+        mCvRefreshGridRecyclerView.setOnItemClickListener(new FamiliarRecyclerView.OnItemClickListener() {
             @Override
             public void onItemClick(FamiliarRecyclerView familiarRecyclerView, View view, int position) {
                 Log.i("wg", "onItemClick = " + familiarRecyclerView + " _ " + view + " _ " + position);
                 Toast.makeText(ImitateGridViewDemoActivity.this, "onItemClick = " + position, Toast.LENGTH_SHORT).show();
             }
         });
-        mRecyclerView.setOnItemLongClickListener(new FamiliarRecyclerView.OnItemLongClickListener() {
+        mCvRefreshGridRecyclerView.setOnItemLongClickListener(new FamiliarRecyclerView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(FamiliarRecyclerView familiarRecyclerView, View view, int position) {
                 Log.i("wg", "onItemLongClick = " + familiarRecyclerView + " _ " + view + " _ " + position);
@@ -60,59 +64,9 @@ public class ImitateGridViewDemoActivity extends AppCompatActivity {
             }
         });
 
-        mRecyclerView.addOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecyclerView.getLayoutManager()) {
+        mCvRefreshGridRecyclerView.setOnPullRefreshListener(new FamiliarRefreshRecyclerView.OnPullRefreshListener() {
             @Override
-            public void onScrolledToTop() {
-                Log.i("wg", "onScrolledToTop ...");
-            }
-
-            @Override
-            public void onScrolledToBottom() {
-                Log.i("wg", "onScrolledToBottom ...");
-                if (mDatas.size() >= 70) {
-                    return ;
-                }
-
-                // add footer view
-                mPbLoadMoreProgressBar.setVisibility(View.VISIBLE);
-                mTvLoadMoreText.setText("正在加载数据...");
-
-                new android.os.Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        int startPos = mDatas.size() - 1;
-                        List<String> newDatas = getDatas();
-                        mDatas.addAll(newDatas);
-                        mAdapter.notifyItemRangeChanged(startPos, newDatas.size());
-
-                        mPbLoadMoreProgressBar.setVisibility(View.GONE);
-                        mTvLoadMoreText.setText("松开加载更多");
-
-                        if (mDatas.size() >= 70) {
-                            mRecyclerView.removeFooterView(mFooterLoadMoreView);
-                        }
-                    }
-                }, 1000);
-            }
-        });
-
-        mFooterLoadMoreView = View.inflate(this, R.layout.footer_view_load_more, null);
-        mPbLoadMoreProgressBar = (ProgressBar)mFooterLoadMoreView.findViewById(R.id.pb_progressBar);
-        mTvLoadMoreText = (TextView)mFooterLoadMoreView.findViewById(R.id.tv_text);
-
-        // ItemAnimator
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        // head view
-        mRecyclerView.addHeaderView(HeaderAndFooterViewUtil.getHeadView(this, isVertical, 0xFFFF5000, "Head View 1"));
-
-        mRecyclerView.addFooterView(mFooterLoadMoreView);
-
-        mAdapter = new MyAdapter();
-        mRecyclerView.setAdapter(mAdapter);
-
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
+            public void onPullRefresh() {
                 new android.os.Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -120,16 +74,32 @@ public class ImitateGridViewDemoActivity extends AppCompatActivity {
                         mDatas.addAll(getDatas());
                         mAdapter.notifyDataSetChanged();
 
-                        mRecyclerView.addFooterView(mFooterLoadMoreView);
-
-                        mPbLoadMoreProgressBar.setVisibility(View.GONE);
-                        mTvLoadMoreText.setText("松开加载更多");
-
-                        mSwipeRefreshLayout.setRefreshing(false);
+                        mCvRefreshGridRecyclerView.pullRefreshComplete();
+                        Log.i("wg", "加载完成啦...");
                     }
                 }, 1000);
             }
         });
+
+        mCvRefreshGridRecyclerView.setOnLoadMoreListener(new FamiliarRefreshRecyclerView.OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                new android.os.Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        int startPos = mDatas.size();
+                        List<String> newDatas = getDatas();
+                        mDatas.addAll(newDatas);
+                        mAdapter.notifyItemInserted(startPos);
+
+                        mCvRefreshGridRecyclerView.loadMoreComplete();
+                    }
+                }, 1000);
+            }
+        });
+
+        mAdapter = new MyAdapter();
+        mCvRefreshGridRecyclerView.setAdapter(mAdapter);
     }
 
     class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {

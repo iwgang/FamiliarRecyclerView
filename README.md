@@ -8,7 +8,7 @@
 ![](https://raw.githubusercontent.com/iwgang/FamiliarRecyclerView/master/screenshot/screenshot.gif)  
 
 ### gradle
-    compile 'com.github.iwgang:familiarrecyclerview:1.2.5'
+    compile 'com.github.iwgang:familiarrecyclerview:1.3.0'
 
 ### 这些是不是很熟悉？
 ```
@@ -98,7 +98,39 @@ mRecyclerView.setOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecy
       app:frv_layoutManager="staggeredGrid"
       app:frv_layoutManagerOrientation="vertical"
       app:frv_spanCount="2" />
-``` 
+```
+
+### 下拉刷新 + 加载更多
+在1.3.0版本开始，新增加了FamiliarRefreshRecyclerView来实现下拉刷新及加载更多
+```
+// 布局 （FamiliarRecyclerView的属性全可以使用，List、Gird、staggeredGrid均可设置）
+<cn.iwgang.familiarrecyclerview.FamiliarRefreshRecyclerView
+    android:id="@+id/cv_refreshListRecyclerView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="vertical"
+    app:frv_divider="#333333"
+    app:frv_dividerHeight="0.5dp"
+    app:frv_emptyView="@id/tv_empty"
+    app:frv_isEmptyViewKeepShowHeadOrFooter="true"
+    app:frv_layoutManager="linear"
+    app:frv_layoutManagerOrientation="vertical" />
+
+// 下拉刷新回调
+mCvRefreshListRecyclerView.setOnPullRefreshListener(...)
+
+// 加载更多回调
+mCvRefreshListRecyclerView.setOnLoadMoreListener(...)
+
+// 设置加载更多的View
+mCvRefreshListRecyclerView.setLoadMoreView(...)
+
+// 设置启动/停用下拉刷新
+mCvRefreshListRecyclerView.setLoadMoreEnabled(true / false);
+
+// 设置启动/停用加载更多
+mCvRefreshListRecyclerView.setPullRefreshEnabled(true / false);
+```
 
 ### 自定义配置
     参数 | 类型 | 默认值 | 说明

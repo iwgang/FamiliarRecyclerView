@@ -13,25 +13,17 @@
         android:text="no data"
         android:visibility="gone" />
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/mSwipeRefreshLayout"
+    <cn.iwgang.familiarrecyclerview.FamiliarRefreshRecyclerView
+        android:id="@+id/cv_refreshGridRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <cn.iwgang.familiarrecyclerview.FamiliarRecyclerView
-            android:id="@+id/mRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical"
-            app:frv_divider="#333333"
-            app:frv_dividerHeight="0.5dp"
-            app:frv_emptyView="@id/tv_empty"
-            app:frv_isEmptyViewKeepShowHeadOrFooter="true"
-            app:frv_layoutManager="grid"
-            app:frv_layoutManagerOrientation="vertical"
-            app:frv_spanCount="3" />
-
-    </android.support.v4.widget.SwipeRefreshLayout>
-
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        app:frv_divider="#333333"
+        app:frv_dividerHeight="0.5dp"
+        app:frv_emptyView="@id/tv_empty"
+        app:frv_isEmptyViewKeepShowHeadOrFooter="true"
+        app:frv_layoutManager="grid"
+        app:frv_layoutManagerOrientation="vertical"
+        app:frv_spanCount="3" />
 
 </FrameLayout>
