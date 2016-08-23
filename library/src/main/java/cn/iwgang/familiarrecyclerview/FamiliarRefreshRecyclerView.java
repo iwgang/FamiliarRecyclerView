@@ -71,7 +71,7 @@ public class FamiliarRefreshRecyclerView extends SwipeRefreshLayout implements S
     /**
      * Automatic pull refresh
      */
-    protected void autoRefresh() {
+    public void autoRefresh() {
         if (!isPullRefreshEnabled) return;
 
         setRefreshing(true);
