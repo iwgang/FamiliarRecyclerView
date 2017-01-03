@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingBottom="15dp"
+    android:paddingTop="15dp">
+
+    <ProgressBar
+        android:id="@+id/frv_pbLoad"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/frv_tvLoadText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="@string/frv_def_load_more_view_status_normal"
+        android:textColor="#999999"
+        android:textSize="16sp"/>
+
+</LinearLayout>

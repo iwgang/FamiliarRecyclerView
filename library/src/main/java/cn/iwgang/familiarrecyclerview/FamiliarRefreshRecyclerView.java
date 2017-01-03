@@ -11,6 +11,7 @@ import android.util.AttributeSet;
  * https://github.com/iwgang/FamiliarRecyclerView
  */
 public class FamiliarRefreshRecyclerView extends SwipeRefreshLayout implements SwipeRefreshLayout.OnRefreshListener {
+    private Context mContext;
     private FamiliarRecyclerView mRvList;
     private IFamiliarLoadMore mLoadMoreView;
 
@@ -19,10 +20,10 @@ public class FamiliarRefreshRecyclerView extends SwipeRefreshLayout implements S
     private FamiliarRecyclerViewOnScrollListener mFamiliarRecyclerViewOnScrollListener;
     private boolean isPullRefreshEnabled = true;
     private boolean isLoadMoreEnabled = false;
-    private boolean isSetLoadMoreView = false;
 
     public FamiliarRefreshRecyclerView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mContext = context;
         initViews(attrs);
     }
 
@@ -30,6 +31,7 @@ public class FamiliarRefreshRecyclerView extends SwipeRefreshLayout implements S
         mRvList = new FamiliarRecyclerView(getContext(), attrs);
         addView(mRvList, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         setOnRefreshListener(this);
+        setLoadMoreView(new FamiliarDefaultLoadMoreView(mContext));
     }
 
     @Override
@@ -48,7 +50,6 @@ public class FamiliarRefreshRecyclerView extends SwipeRefreshLayout implements S
             if (null != mLoadMoreView) {
                 mRvList.removeFooterView(mLoadMoreView.getView());
                 mRvList.removeOnScrollListener(mFamiliarRecyclerViewOnScrollListener);
-                isSetLoadMoreView = false;
                 mLoadMoreView = null;
             }
             return;
@@ -56,7 +57,6 @@ public class FamiliarRefreshRecyclerView extends SwipeRefreshLayout implements S
 
         mLoadMoreView = loadMoreView;
         initializeLoadMoreView();
-        isSetLoadMoreView = null != mLoadMoreView;
     }
 
     /**
@@ -96,7 +96,7 @@ public class FamiliarRefreshRecyclerView extends SwipeRefreshLayout implements S
     }
 
     public void setLoadMoreEnabled(boolean enabled) {
-        if (!isSetLoadMoreView || isLoadMoreEnabled == enabled || null == mLoadMoreView) return;
+        if (isLoadMoreEnabled == enabled) return;
 
         if (!enabled) {
             mRvList.removeFooterView(mLoadMoreView.getView());
@@ -112,9 +112,7 @@ public class FamiliarRefreshRecyclerView extends SwipeRefreshLayout implements S
     }
 
     public void loadMoreComplete() {
-        if (isSetLoadMoreView) {
-            mLoadMoreView.showNormal();
-        }
+        mLoadMoreView.showNormal();
     }
 
     private void initializeLoadMoreView() {
@@ -126,7 +124,7 @@ public class FamiliarRefreshRecyclerView extends SwipeRefreshLayout implements S
 
                 @Override
                 public void onScrolledToBottom() {
-                    if (!isLoadMoreEnabled || !isSetLoadMoreView || mLoadMoreView.isLoading()) return;
+                    if (!isLoadMoreEnabled || mLoadMoreView.isLoading()) return;
 
                     mLoadMoreView.showLoading();
                     callOnLoadMore();

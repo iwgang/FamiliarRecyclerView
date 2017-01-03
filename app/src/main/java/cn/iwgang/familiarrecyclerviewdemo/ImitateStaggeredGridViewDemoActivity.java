@@ -39,7 +39,7 @@ public class ImitateStaggeredGridViewDemoActivity extends AppCompatActivity {
         mDatas.addAll(getDatas());
 
         mCvRefreshStaggeredGridRecyclerView = (FamiliarRefreshRecyclerView)findViewById(R.id.cv_refreshStaggeredGridRecyclerView);
-        mCvRefreshStaggeredGridRecyclerView.setLoadMoreView(new LoadMoreView(this));
+        mCvRefreshStaggeredGridRecyclerView.setLoadMoreView(new CustomLoadMoreView(this));
         mCvRefreshStaggeredGridRecyclerView.setColorSchemeColors(Color.GRAY, Color.RED, Color.YELLOW, Color.GREEN);
         mCvRefreshStaggeredGridRecyclerView.setLoadMoreEnabled(true);
 

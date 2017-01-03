@@ -36,7 +36,7 @@ public class ImitateListViewDemoActivity extends AppCompatActivity {
         mDatas.addAll(getDatas());
 
         mCvRefreshListRecyclerView = (FamiliarRefreshRecyclerView)findViewById(R.id.cv_refreshListRecyclerView);
-        mCvRefreshListRecyclerView.setLoadMoreView(new LoadMoreView(this));
+        mCvRefreshListRecyclerView.setLoadMoreView(new CustomLoadMoreView(this));
         mCvRefreshListRecyclerView.setColorSchemeColors(0xFFFF5000, Color.RED, Color.YELLOW, Color.GREEN);
         mCvRefreshListRecyclerView.setLoadMoreEnabled(true);
 

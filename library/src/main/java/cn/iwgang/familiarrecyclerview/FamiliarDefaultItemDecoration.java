@@ -346,6 +346,8 @@ public class FamiliarDefaultItemDecoration extends RecyclerView.ItemDecoration {
 
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+        if (mVerticalDividerDrawableHeight <= 0 && mHorizontalDividerDrawableHeight <= 0) return;
+
         RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) view.getLayoutParams();
         int position = params.getViewAdapterPosition();
         int headersCount;

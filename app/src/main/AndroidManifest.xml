@@ -24,6 +24,7 @@
         <activity android:name=".ImitateListViewDemoActivity" />
         <activity android:name=".ImitateGridViewDemoActivity" />
         <activity android:name=".ImitateStaggeredGridViewDemoActivity" />
+        <activity android:name=".ImitateNewListViewDemoActivity" />
     </application>
 
 </manifest>

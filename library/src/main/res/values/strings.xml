@@ -1,0 +1,7 @@
+<resources>
+
+    <string name="frv_def_load_more_view_status_normal">松开加载更多</string>
+    <string name="frv_def_load_more_view_status_loading">加载数据中，请稍等...</string>
+    <string name="frv_def_load_more_view_status_error">加载失败，请重试</string>
+
+</resources>

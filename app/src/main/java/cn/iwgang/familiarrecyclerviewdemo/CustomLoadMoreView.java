@@ -12,22 +12,22 @@ import cn.iwgang.familiarrecyclerview.IFamiliarLoadMore;
 /**
  * 用于List中加载更多显示的View
  */
-public class LoadMoreView extends FrameLayout implements IFamiliarLoadMore {
+public class CustomLoadMoreView extends FrameLayout implements IFamiliarLoadMore {
     private ProgressBar mPbLoad;
     private TextView mTvLoadText;
 
     private boolean isLoading = false; // 是否加载中
 
 
-    public LoadMoreView(Context context) {
+    public CustomLoadMoreView(Context context) {
         this(context, null);
     }
 
-    public LoadMoreView(Context context, AttributeSet attrs) {
+    public CustomLoadMoreView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public LoadMoreView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CustomLoadMoreView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView();
     }

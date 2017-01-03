@@ -36,7 +36,7 @@ public class ImitateGridViewDemoActivity extends AppCompatActivity {
         mDatas.addAll(getDatas());
 
         mCvRefreshGridRecyclerView = (FamiliarRefreshRecyclerView)findViewById(R.id.cv_refreshGridRecyclerView);
-        mCvRefreshGridRecyclerView.setLoadMoreView(new LoadMoreView(this));
+        mCvRefreshGridRecyclerView.setLoadMoreView(new CustomLoadMoreView(this));
         mCvRefreshGridRecyclerView.setColorSchemeColors(Color.BLUE, Color.RED, Color.YELLOW, Color.GREEN);
         mCvRefreshGridRecyclerView.setLoadMoreEnabled(true);
 

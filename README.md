@@ -8,7 +8,7 @@
 ![](https://raw.githubusercontent.com/iwgang/FamiliarRecyclerView/master/screenshot/screenshot.gif)  
 
 ### gradle
-    compile 'com.github.iwgang:familiarrecyclerview:1.3.1'
+    compile 'com.github.iwgang:familiarrecyclerview:1.3.2'
 
 ### 这些是不是很熟悉？
 ```
@@ -52,6 +52,20 @@ mRecyclerView.setOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecy
         // bottom
     }
 });
+```
+
+
+另外新增了
+简易Adapter [另提供一个用于DataBinding中的通用Adapter](https://github.com/iwgang/FamiliarRecyclerView/blob/master/app/src/main/java/cn/iwgang/familiarrecyclerviewdemo/DataBindingAdapter.java)
+```
+mAdapter = new FamiliarEasyAdapter<UserInfo>(this, R.layout.item_view, data) {
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        TextView tvName = holder.findView(R.id.tv_name);
+        tvName.setText(mAdapter.getData(position).getName());
+    }
+};
+
 等...
 当然，RecyclerView原有的那些全部都能正常使用的
 ```
@@ -102,6 +116,7 @@ mRecyclerView.setOnScrollListener(new FamiliarRecyclerViewOnScrollListener(mRecy
 
 ### 下拉刷新 + 加载更多
 在1.3.0版本开始，新增加了FamiliarRefreshRecyclerView来实现下拉刷新及加载更多
+[建议参考示例代码](https://github.com/iwgang/FamiliarRecyclerView/blob/master/app/src/main/java/cn/iwgang/familiarrecyclerviewdemo/ImitateNewListViewDemoActivity.java)
 ```
 // 布局 （FamiliarRecyclerView的属性全可以使用，List、Gird、staggeredGrid均可设置）
 <cn.iwgang.familiarrecyclerview.FamiliarRefreshRecyclerView
