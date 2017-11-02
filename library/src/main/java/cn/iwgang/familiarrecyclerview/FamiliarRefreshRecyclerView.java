@@ -29,6 +29,7 @@ public class FamiliarRefreshRecyclerView extends SwipeRefreshLayout implements S
 
     private void initViews(AttributeSet attrs) {
         mRvList = new FamiliarRecyclerView(getContext(), attrs);
+        mRvList.setId(R.id.frv_refreshInternalRecyclerView);
         addView(mRvList, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         setOnRefreshListener(this);
         setLoadMoreView(new FamiliarDefaultLoadMoreView(mContext));

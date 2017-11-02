@@ -307,7 +307,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
     @Override
     public boolean onLongClick(View v) {
         long curTime = System.currentTimeMillis();
-        if (null != mOnItemClickListener && curTime - mLastClickTime > MIN_INTERVAL_CLICK_TIME) {
+        if (null != mOnItemLongClickListener && curTime - mLastClickTime > MIN_INTERVAL_CLICK_TIME) {
             mLastClickTime = curTime;
             return mOnItemLongClickListener.onItemLongClick(mFamiliarRecyclerView, v, mFamiliarRecyclerView.getChildAdapterPosition(v) - mFamiliarRecyclerView.getHeaderViewsCount());
         }
