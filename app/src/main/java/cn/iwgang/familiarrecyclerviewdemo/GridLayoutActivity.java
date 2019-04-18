@@ -17,11 +17,10 @@ import java.util.List;
 
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerViewOnScrollListener;
-import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class GridLayoutActivity extends AppCompatActivity {
     private FamiliarRecyclerView mRecyclerView;
-    private List<String> mDatas;
+    private List<String> mDataList;
     private MyAdapter mAdapter;
 
     private boolean isVertical = true;
@@ -39,9 +38,9 @@ public class GridLayoutActivity extends AppCompatActivity {
             setContentView(R.layout.act_layout_grid_hor);
         }
 
-        mDatas = new ArrayList<>();
-        for (int i = 0; i < 12; i++) {
-            mDatas.add("item:" + i);
+        mDataList = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            mDataList.add("item:" + i);
         }
 
         mRecyclerView = (FamiliarRecyclerView) findViewById(R.id.mRecyclerView);
@@ -82,10 +81,6 @@ public class GridLayoutActivity extends AppCompatActivity {
             }
         });
 
-        // ItemAnimator
-        mRecyclerView.setItemAnimator(new LandingAnimator());
-        mRecyclerView.setHasFixedSize(true);
-
 //        mRecyclerView.setHeaderDividersEnabled(true);
 //        mRecyclerView.setFooterDividersEnabled(true);
 
@@ -112,12 +107,12 @@ public class GridLayoutActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
-            holder.mTvTxt.setText(mDatas.get(position));
+            holder.mTvTxt.setText(mDataList.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return mDatas.size();
+            return mDataList.size();
         }
     }
 
@@ -142,17 +137,17 @@ public class GridLayoutActivity extends AppCompatActivity {
         int notifyPos;
         switch (item.getItemId()) {
             case R.id.id_action_add:
-                notifyPos = mDatas.size();
+                notifyPos = mDataList.size();
 
-                mDatas.add("new add item:" + notifyPos);
+                mDataList.add("new add item:" + notifyPos);
                 mAdapter.notifyItemInserted(notifyPos);
                 break;
             case R.id.id_action_delete:
-                if (mDatas.isEmpty()) return true;
+                if (mDataList.isEmpty()) return true;
 
-                notifyPos = mDatas.size() - 1;
+                notifyPos = mDataList.size() - 1;
 
-                mDatas.remove(notifyPos);
+                mDataList.remove(notifyPos);
                 mAdapter.notifyItemRemoved(notifyPos);
                 break;
         }

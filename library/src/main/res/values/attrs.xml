@@ -8,6 +8,10 @@
         <attr name="frv_dividerHeight" format="dimension" />
         <attr name="frv_dividerVerticalHeight" format="dimension" />
         <attr name="frv_dividerHorizontalHeight" format="dimension" />
+        <attr name="frv_dividerHorizontalLeftMargin" format="dimension" />
+        <attr name="frv_dividerHorizontalRightMargin" format="dimension" />
+        <attr name="frv_dividerVerticalTopMargin" format="dimension" />
+        <attr name="frv_dividerVerticalBottomMargin" format="dimension" />
         <attr name="frv_itemViewBothSidesMargin" format="dimension" />
         <attr name="frv_emptyView" format="reference" />
         <attr name="frv_isEmptyViewKeepShowHeadOrFooter" format="boolean" />

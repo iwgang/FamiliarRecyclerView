@@ -1,13 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 27
 
     defaultConfig {
         applicationId "cn.iwgang.familiarrecyclerviewdemo"
         minSdkVersion 15
-        targetSdkVersion 25
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
     }
@@ -23,8 +22,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':library')
-    compile "com.android.support:appcompat-v7:${SUPPORT_PACKAGE_VERSION}"
-    compile 'jp.wasabeef:recyclerview-animators:2.1.0' // https://github.com/wasabeef/recyclerview-animators
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':library')
+    implementation "com.android.support:appcompat-v7:${SUPPORT_PACKAGE_VERSION}"
 }
