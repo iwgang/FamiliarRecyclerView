@@ -1,9 +1,9 @@
 package cn.iwgang.familiarrecyclerview.baservadapter;
 
-import android.support.v7.widget.RecyclerView;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * FamiliarBaseAdapter

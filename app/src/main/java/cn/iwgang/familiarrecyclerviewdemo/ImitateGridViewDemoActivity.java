@@ -2,9 +2,6 @@ package cn.iwgang.familiarrecyclerviewdemo;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,6 +14,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.RecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRefreshRecyclerView;
 
@@ -35,7 +35,7 @@ public class ImitateGridViewDemoActivity extends AppCompatActivity {
         mDatas = new ArrayList<>();
         mDatas.addAll(getDatas());
 
-        mCvRefreshGridRecyclerView = (FamiliarRefreshRecyclerView)findViewById(R.id.cv_refreshGridRecyclerView);
+        mCvRefreshGridRecyclerView = findViewById(R.id.cv_refreshGridRecyclerView);
         mCvRefreshGridRecyclerView.setLoadMoreView(new CustomLoadMoreView(this));
         mCvRefreshGridRecyclerView.setColorSchemeColors(Color.BLUE, Color.RED, Color.YELLOW, Color.GREEN);
         mCvRefreshGridRecyclerView.setLoadMoreEnabled(true);
@@ -124,7 +124,7 @@ public class ImitateGridViewDemoActivity extends AppCompatActivity {
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            mTvTxt = (TextView)itemView.findViewById(R.id.tv_txt);
+            mTvTxt = itemView.findViewById(R.id.tv_txt);
         }
     }
 
@@ -159,7 +159,7 @@ public class ImitateGridViewDemoActivity extends AppCompatActivity {
 
     private List<String> getDatas() {
         List<String> tempDatas = new ArrayList<>();
-        int curMaxData =  mDatas.size();
+        int curMaxData = mDatas.size();
         for (int i = 0; i < 10; i++) {
             tempDatas.add("item:" + (curMaxData + i));
         }

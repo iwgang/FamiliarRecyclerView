@@ -1,7 +1,5 @@
 package cn.iwgang.familiarrecyclerview;
 
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -9,6 +7,9 @@ import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 /**
  * Wrap FamiliarRecyclerView Adapter
@@ -142,7 +143,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
                 tempFooterView = mFooterView.get(curHeaderOrFooterPos);
                 ViewParent tempFooterViewParent = tempFooterView.getParent();
                 if (null != tempFooterViewParent) {
-                    ((ViewGroup)tempFooterViewParent).removeView(tempFooterView);
+                    ((ViewGroup) tempFooterViewParent).removeView(tempFooterView);
                 }
 
                 if (mLayoutManagerType == FamiliarRecyclerView.LAYOUT_MANAGER_TYPE_STAGGERED_GRID) {
@@ -200,7 +201,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
 
         int position = holder.getAdapterPosition();
         if (null == mReqAdapter || isHeaderView(position) || isFooterView(position)) {
-            return ;
+            return;
         }
 
         mReqAdapter.onViewAttachedToWindow(holder);
@@ -212,7 +213,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
 
         int position = holder.getAdapterPosition();
         if (null == mReqAdapter || isHeaderView(position) || isFooterView(position)) {
-            return ;
+            return;
         }
 
         mReqAdapter.onViewDetachedFromWindow(holder);
@@ -223,7 +224,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
         super.onAttachedToRecyclerView(recyclerView);
 
         if (null == mReqAdapter) {
-            return ;
+            return;
         }
 
         mReqAdapter.onAttachedToRecyclerView(recyclerView);
@@ -234,7 +235,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
         super.onDetachedFromRecyclerView(recyclerView);
 
         if (null == mReqAdapter) {
-            return ;
+            return;
         }
 
         mReqAdapter.onDetachedFromRecyclerView(recyclerView);
@@ -246,7 +247,7 @@ public class FamiliarWrapRecyclerViewAdapter extends RecyclerView.Adapter implem
 
         int position = holder.getAdapterPosition();
         if (null == mReqAdapter || isHeaderView(position) || isFooterView(position)) {
-            return ;
+            return;
         }
 
         mReqAdapter.onViewRecycled(holder);

@@ -2,9 +2,6 @@ package cn.iwgang.familiarrecyclerviewdemo;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,6 +14,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.RecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRefreshRecyclerView;
 
@@ -38,7 +38,7 @@ public class ImitateStaggeredGridViewDemoActivity extends AppCompatActivity {
         mViewHeights = new ArrayList<>();
         mDatas.addAll(getDatas());
 
-        mCvRefreshStaggeredGridRecyclerView = (FamiliarRefreshRecyclerView)findViewById(R.id.cv_refreshStaggeredGridRecyclerView);
+        mCvRefreshStaggeredGridRecyclerView = findViewById(R.id.cv_refreshStaggeredGridRecyclerView);
         mCvRefreshStaggeredGridRecyclerView.setLoadMoreView(new CustomLoadMoreView(this));
         mCvRefreshStaggeredGridRecyclerView.setColorSchemeColors(Color.GRAY, Color.RED, Color.YELLOW, Color.GREEN);
         mCvRefreshStaggeredGridRecyclerView.setLoadMoreEnabled(true);
@@ -49,7 +49,7 @@ public class ImitateStaggeredGridViewDemoActivity extends AppCompatActivity {
         // head view
         mFamiliarRecyclerView.addHeaderView(HeaderAndFooterViewUtil.getHeadView(this, true, 0xFFFF5000, "Head View 1"));
 
-        
+
         // Item Click and Item Long Click
         mCvRefreshStaggeredGridRecyclerView.setOnItemClickListener(new FamiliarRecyclerView.OnItemClickListener() {
             @Override
@@ -130,7 +130,7 @@ public class ImitateStaggeredGridViewDemoActivity extends AppCompatActivity {
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            mTvTxt = (TextView)itemView.findViewById(R.id.tv_txt);
+            mTvTxt = itemView.findViewById(R.id.tv_txt);
         }
     }
 
@@ -150,7 +150,7 @@ public class ImitateStaggeredGridViewDemoActivity extends AppCompatActivity {
                 notifyPos = mDatas.size();
 
                 mDatas.add("new " + mDatas.size());
-                mViewHeights.add((int)(100 + Math.random() * 300));
+                mViewHeights.add((int) (100 + Math.random() * 300));
                 mAdapter.notifyItemInserted(notifyPos);
                 break;
             case R.id.id_action_delete:
@@ -167,10 +167,10 @@ public class ImitateStaggeredGridViewDemoActivity extends AppCompatActivity {
 
     private List<String> getDatas() {
         List<String> tempDatas = new ArrayList<>();
-        int curMaxData =  mDatas.size();
+        int curMaxData = mDatas.size();
         for (int i = 0; i < 10; i++) {
             tempDatas.add("item:" + (curMaxData + i));
-            mViewHeights.add((int)(300 + Math.random() * 300));
+            mViewHeights.add((int) (300 + Math.random() * 300));
         }
 
         return tempDatas;

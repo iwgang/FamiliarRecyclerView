@@ -1,9 +1,6 @@
 package cn.iwgang.familiarrecyclerviewdemo;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +13,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.RecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerViewOnScrollListener;
 
@@ -126,7 +126,7 @@ public class LinearLayoutActivity extends AppCompatActivity {
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            mTvTxt = (TextView)itemView.findViewById(R.id.tv_txt);
+            mTvTxt = (TextView) itemView.findViewById(R.id.tv_txt);
         }
     }
 

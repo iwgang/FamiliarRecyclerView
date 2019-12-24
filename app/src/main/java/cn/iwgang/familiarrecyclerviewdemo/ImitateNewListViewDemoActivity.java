@@ -2,8 +2,6 @@ package cn.iwgang.familiarrecyclerviewdemo;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +11,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRefreshRecyclerView;
 import cn.iwgang.familiarrecyclerview.baservadapter.FamiliarEasyAdapter;
@@ -26,7 +26,7 @@ public class ImitateNewListViewDemoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_layout_imitate_listview);
 
-        mCvRefreshListRecyclerView = (FamiliarRefreshRecyclerView) findViewById(R.id.cv_refreshListRecyclerView);
+        mCvRefreshListRecyclerView = findViewById(R.id.cv_refreshListRecyclerView);
         mCvRefreshListRecyclerView.setColorSchemeColors(0xFFFF5000, Color.RED, Color.YELLOW, Color.GREEN);
         mCvRefreshListRecyclerView.setLoadMoreEnabled(true);
 

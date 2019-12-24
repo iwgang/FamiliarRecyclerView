@@ -2,9 +2,6 @@ package cn.iwgang.familiarrecyclerviewdemo;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,6 +14,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.RecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRefreshRecyclerView;
 
@@ -35,7 +35,7 @@ public class ImitateListViewDemoActivity extends AppCompatActivity {
         mDatas = new ArrayList<>();
         mDatas.addAll(getDatas());
 
-        mCvRefreshListRecyclerView = (FamiliarRefreshRecyclerView)findViewById(R.id.cv_refreshListRecyclerView);
+        mCvRefreshListRecyclerView = findViewById(R.id.cv_refreshListRecyclerView);
         mCvRefreshListRecyclerView.setLoadMoreView(new CustomLoadMoreView(this));
         mCvRefreshListRecyclerView.setColorSchemeColors(0xFFFF5000, Color.RED, Color.YELLOW, Color.GREEN);
         mCvRefreshListRecyclerView.setLoadMoreEnabled(true);
@@ -65,13 +65,12 @@ public class ImitateListViewDemoActivity extends AppCompatActivity {
         });
 
 
-
         // head view
 //        List<String> headDatas = new ArrayList<>();
 //        headDatas.addAll(getDatas());
 //        final MyAdapter2 headAdapter = new MyAdapter2(headDatas, 2);
 //        View headView = View.inflate(this, R.layout.head_frc_grid_hor, null);
-//        final FamiliarRecyclerView mHeadFamiliarRecyclerView = (FamiliarRecyclerView)headView.findViewById(R.id.mHorRecyclerView);
+//        final FamiliarRecyclerView mHeadFamiliarRecyclerView = headView.findViewById(R.id.mHorRecyclerView);
 //        mHeadFamiliarRecyclerView.setOnItemClickListener(new FamiliarRecyclerView.OnItemClickListener() {
 //            @Override
 //            public void onItemClick(FamiliarRecyclerView familiarRecyclerView, View view, int position) {
@@ -150,7 +149,7 @@ public class ImitateListViewDemoActivity extends AppCompatActivity {
                 List<String> mDatas = new ArrayList<>();
                 mDatas.addAll(getDatas());
 
-                FamiliarRecyclerView mHorFamiliarRecyclerView = (FamiliarRecyclerView)holder.itemView.findViewById(R.id.mHorRecyclerView);
+                FamiliarRecyclerView mHorFamiliarRecyclerView = holder.itemView.findViewById(R.id.mHorRecyclerView);
                 mHorFamiliarRecyclerView.setAdapter(myAdapter2 = new MyAdapter2(mDatas, 1));
                 mHorFamiliarRecyclerView.setOnItemClickListener(new FamiliarRecyclerView.OnItemClickListener() {
                     @Override
@@ -171,7 +170,7 @@ public class ImitateListViewDemoActivity extends AppCompatActivity {
                     holder.mTvTxt.setText(mDatas.get(position));
                     break;
                 case VIEW_TYPE_2:
-                    FamiliarRecyclerView mHorFamiliarRecyclerView = (FamiliarRecyclerView)holder.itemView.findViewById(R.id.mHorRecyclerView);
+                    FamiliarRecyclerView mHorFamiliarRecyclerView = holder.itemView.findViewById(R.id.mHorRecyclerView);
                     if (mHorFamiliarRecyclerView.getChildCount() > 0) {
                         mHorFamiliarRecyclerView.reRegisterAdapterDataObserver();
                     }
@@ -224,7 +223,7 @@ public class ImitateListViewDemoActivity extends AppCompatActivity {
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            mTvTxt = (TextView)itemView.findViewById(R.id.tv_txt);
+            mTvTxt = itemView.findViewById(R.id.tv_txt);
         }
     }
 
@@ -259,7 +258,7 @@ public class ImitateListViewDemoActivity extends AppCompatActivity {
 
     private List<String> getDatas() {
         List<String> tempDatas = new ArrayList<>();
-        int curMaxData =  mDatas.size();
+        int curMaxData = mDatas.size();
         for (int i = 0; i < 30; i++) {
             tempDatas.add("item:" + (curMaxData + i));
         }

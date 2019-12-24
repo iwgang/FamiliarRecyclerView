@@ -1,9 +1,10 @@
 package cn.iwgang.familiarrecyclerview;
 
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 /**
  * Familiar OnScrollListener
@@ -23,13 +24,13 @@ public abstract class FamiliarRecyclerViewOnScrollListener extends RecyclerView.
     public FamiliarRecyclerViewOnScrollListener(RecyclerView.LayoutManager layoutManager) {
         if (layoutManager.getClass().isAssignableFrom(LinearLayoutManager.class)) {
             mLayoutManagerType = 1;
-            mLinearLayoutManager = (LinearLayoutManager)layoutManager;
+            mLinearLayoutManager = (LinearLayoutManager) layoutManager;
         } else if (layoutManager.getClass().isAssignableFrom(GridLayoutManager.class)) {
             mLayoutManagerType = 2;
-            mGridLayoutManager = (GridLayoutManager)layoutManager;
+            mGridLayoutManager = (GridLayoutManager) layoutManager;
         } else if (layoutManager.getClass().isAssignableFrom(StaggeredGridLayoutManager.class)) {
             mLayoutManagerType = 3;
-            mStaggeredGridLayoutManager = (StaggeredGridLayoutManager)layoutManager;
+            mStaggeredGridLayoutManager = (StaggeredGridLayoutManager) layoutManager;
             mStaggeredLastPositions = new int[mStaggeredGridLayoutManager.getSpanCount()];
             mStaggeredFirstPositions = new int[mStaggeredGridLayoutManager.getSpanCount()];
         }
@@ -39,7 +40,7 @@ public abstract class FamiliarRecyclerViewOnScrollListener extends RecyclerView.
     public final void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
 
-        if (!isCanScrolledCallback) return ;
+        if (!isCanScrolledCallback) return;
 
         if (checkToTop()) {
             // scrolled to top
@@ -87,7 +88,7 @@ public abstract class FamiliarRecyclerViewOnScrollListener extends RecyclerView.
                 return mGridLayoutManager.findFirstCompletelyVisibleItemPosition() == 0;
             case 3:
                 mStaggeredGridLayoutManager.findFirstCompletelyVisibleItemPositions(mStaggeredFirstPositions);
-                return  mStaggeredFirstPositions[0] == 0;
+                return mStaggeredFirstPositions[0] == 0;
         }
 
         return false;
@@ -115,9 +116,10 @@ public abstract class FamiliarRecyclerViewOnScrollListener extends RecyclerView.
     }
 
     public abstract void onScrolledToTop();
+
     public abstract void onScrolledToBottom();
 
-    protected boolean isIdleCallBack(){
+    protected boolean isIdleCallBack() {
         return true;
     }
 

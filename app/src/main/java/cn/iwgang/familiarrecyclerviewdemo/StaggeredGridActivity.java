@@ -1,9 +1,6 @@
 package cn.iwgang.familiarrecyclerviewdemo;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +13,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.RecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerView;
 import cn.iwgang.familiarrecyclerview.FamiliarRecyclerViewOnScrollListener;
 
@@ -44,10 +44,10 @@ public class StaggeredGridActivity extends AppCompatActivity {
         mViewHeights = new ArrayList<>();
         for (int i = 0; i < 12; i++) {
             mDatas.add("test:" + i);
-            mViewHeights.add((int)(300 + Math.random() * 300));
+            mViewHeights.add((int) (300 + Math.random() * 300));
         }
 
-        mRecyclerView = (FamiliarRecyclerView) findViewById(R.id.mRecyclerView);
+        mRecyclerView = findViewById(R.id.mRecyclerView);
 
         // Item Click and Item Long Click
         mRecyclerView.setOnItemClickListener(new FamiliarRecyclerView.OnItemClickListener() {
@@ -136,7 +136,7 @@ public class StaggeredGridActivity extends AppCompatActivity {
 
         public MyViewHolder(View view) {
             super(view);
-            mTvTxt = (TextView) view.findViewById(R.id.tv_txt);
+            mTvTxt = view.findViewById(R.id.tv_txt);
         }
     }
 
@@ -156,7 +156,7 @@ public class StaggeredGridActivity extends AppCompatActivity {
                 notifyPos = mDatas.size();
 
                 mDatas.add("new " + mDatas.size());
-                mViewHeights.add((int)(100 + Math.random() * 300));
+                mViewHeights.add((int) (100 + Math.random() * 300));
                 mAdapter.notifyItemInserted(notifyPos);
                 break;
             case R.id.id_action_delete:
